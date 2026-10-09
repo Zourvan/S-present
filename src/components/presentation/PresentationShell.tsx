@@ -21,9 +21,23 @@ import { exportPresentationPdf } from "@/lib/export/pdf";
 import { exportPresentationPptx } from "@/lib/export/pptx";
 import { usePrefersReducedMotion } from "@/components/visuals/Reveal";
 import { fromLocaleDigits, toLocaleDigits } from "@/lib/i18n/digits";
+import {
+  TYPE_SCALE_MAX,
+  TYPE_SCALE_MIN,
+} from "@/lib/providers/AppProviders";
 
 export function PresentationShell() {
-  const { strings, locale, theme, toggleLocale, toggleTheme } = useApp();
+  const {
+    strings,
+    locale,
+    theme,
+    toggleLocale,
+    toggleTheme,
+    typeScale,
+    textBold,
+    bumpTypeScale,
+    toggleTextBold,
+  } = useApp();
   const reduce = usePrefersReducedMotion();
   const [index, setIndex] = useState(0);
   const [revealStep, setRevealStep] = useState(1);
@@ -232,6 +246,37 @@ export function PresentationShell() {
           </span>
         </ChromeButton>
 
+        {/* Type controls — compact, always visible */}
+        <div className="flex items-center gap-1" data-no-nav>
+          <ChromeButton
+            onClick={() => bumpTypeScale(-1)}
+            disabled={typeScale <= TYPE_SCALE_MIN}
+            aria-label={strings.fontSmaller}
+            title={strings.fontSmaller}
+            className="px-2"
+          >
+            A−
+          </ChromeButton>
+          <ChromeButton
+            onClick={() => bumpTypeScale(1)}
+            disabled={typeScale >= TYPE_SCALE_MAX}
+            aria-label={strings.fontLarger}
+            title={strings.fontLarger}
+            className="px-2"
+          >
+            A+
+          </ChromeButton>
+          <ChromeButton
+            onClick={toggleTextBold}
+            active={textBold}
+            aria-label={textBold ? strings.textBoldOff : strings.textBold}
+            title={textBold ? strings.textBoldOff : strings.textBold}
+            className="px-2 font-extrabold"
+          >
+            B
+          </ChromeButton>
+        </div>
+
         {/* Secondary — desktop row / mobile overflow */}
         <div className="relative hidden items-center gap-2 md:flex">
           <ChromeButton
@@ -294,6 +339,38 @@ export function PresentationShell() {
               className="absolute right-0 z-50 mt-1 w-44 rounded-md border border-[var(--border)] bg-[var(--surface)] p-1 shadow-lg"
               data-no-nav
             >
+              <button
+                type="button"
+                className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                onClick={() => {
+                  bumpTypeScale(-1);
+                  setMoreOpen(false);
+                }}
+                disabled={typeScale <= TYPE_SCALE_MIN}
+              >
+                {strings.fontSmaller}
+              </button>
+              <button
+                type="button"
+                className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                onClick={() => {
+                  bumpTypeScale(1);
+                  setMoreOpen(false);
+                }}
+                disabled={typeScale >= TYPE_SCALE_MAX}
+              >
+                {strings.fontLarger}
+              </button>
+              <button
+                type="button"
+                className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                onClick={() => {
+                  toggleTextBold();
+                  setMoreOpen(false);
+                }}
+              >
+                {textBold ? strings.textBoldOff : strings.textBold}
+              </button>
               <button
                 type="button"
                 className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"

@@ -29,6 +29,7 @@
   --slide-w: 1280px;
   --slide-h: 720px;
   --slide-fs: 16px;
+  --slide-type-scale: 1;
   --logo-hero-h: 120px;
   --logo-presenter-h: 132px;
   --logo-thanks-h: 108px;
@@ -96,9 +97,43 @@ body {
   color: var(--text-ink);
   box-shadow: var(--slide-shadow);
   font-size: var(--slide-fs);
+  /* Scales rem/Tailwind text inside the canvas (Chromium/Edge; Safari falls back to fs only) */
+  zoom: var(--slide-type-scale, 1);
   line-height: 1.4;
   overflow: hidden;
   box-sizing: border-box;
+}
+
+@supports not (zoom: 1) {
+  .slide-stage {
+    font-size: calc(var(--slide-fs) * var(--slide-type-scale, 1));
+  }
+}
+
+/* Presenter control: thicker slide body text */
+html[data-text-bold="true"] .slide-stage {
+  font-weight: 600;
+}
+
+html[data-text-bold="true"] .slide-stage :where(p, li, td, th, span, label) {
+  font-weight: 700;
+}
+
+html[data-text-bold="true"] .slide-stage :where(h1, h2, h3, h4, strong, b) {
+  font-weight: 800;
+}
+
+html[data-text-bold="true"] .slide-stage .font-medium {
+  font-weight: 700 !important;
+}
+
+html[data-text-bold="true"] .slide-stage .font-semibold,
+html[data-text-bold="true"] .slide-stage .font-bold {
+  font-weight: 800 !important;
+}
+
+html[data-text-bold="true"] .slide-stage .font-extrabold {
+  font-weight: 900 !important;
 }
 
 html[lang="fa"],
@@ -127,8 +162,34 @@ html[lang="fa"] .slide-stage {
   cursor: default;
 }
 
-.slide-flow-canvas .react-flow__edge-path {
-  stroke-linecap: round;
+.slide-flow-canvas .react-flow__edges {
+  z-index: 5 !important;
+}
+
+.slide-flow-canvas .react-flow__edge-path,
+.slide-flow-canvas .react-flow__connection-path {
+  stroke: #00adc8 !important;
+  stroke-width: 4px !important;
+  stroke-linecap: round !important;
+  fill: none !important;
+}
+
+.slide-flow-canvas .react-flow__edge.animated path {
+  stroke-dasharray: 6 4;
+}
+
+.slide-flow-canvas .react-flow__arrowhead,
+.slide-flow-canvas marker path {
+  fill: #00adc8 !important;
+  stroke: #00adc8 !important;
+}
+
+.slide-flow-canvas .slide-flow-handle {
+  width: 10px !important;
+  height: 10px !important;
+  border: 2px solid #fff !important;
+  background: #00adc8 !important;
+  opacity: 1 !important;
 }
 
 .slide-stage table {

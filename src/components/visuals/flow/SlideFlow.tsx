@@ -20,6 +20,10 @@ import { useApp } from "@/lib/providers/AppProviders";
 
 type Pathway = FlowNode["pathway"];
 
+/** Solid colors — SVG stroke/markers often ignore CSS variables. */
+const EDGE_STROKE = "#00adc8";
+const EDGE_STROKE_DIM = "rgba(0, 173, 200, 0.35)";
+
 type SlideFlowNodeData = {
   label: string;
   pathway?: Pathway;
@@ -29,15 +33,15 @@ type SlideFlowNodeData = {
 };
 
 function pathwayBorder(pathway?: Pathway): string {
-  if (pathway === "oral") return "var(--oral-coral)";
-  if (pathway === "biotech") return "var(--biotech-burgundy)";
-  return "var(--brand-cyan)";
+  if (pathway === "oral") return "#d66270";
+  if (pathway === "biotech") return "#7d0a1b";
+  return "#00adc8";
 }
 
 function pathwayText(pathway?: Pathway): string {
-  if (pathway === "oral") return "var(--oral-coral)";
-  if (pathway === "biotech") return "var(--biotech-burgundy)";
-  return "var(--brand-cyan-dark)";
+  if (pathway === "oral") return "#d66270";
+  if (pathway === "biotech") return "#7d0a1b";
+  return "#008a9e";
 }
 
 function SlideFlowNode({ data }: NodeProps) {
@@ -45,33 +49,35 @@ function SlideFlowNode({ data }: NodeProps) {
   const border = pathwayBorder(d.pathway);
   const color = pathwayText(d.pathway);
   const style: CSSProperties = {
-    opacity: d.visible ? 1 : 0.28,
+    opacity: d.visible ? 1 : 0.35,
     borderColor: border,
     color,
-    transform: d.visible ? "translateY(0)" : "translateY(6px)",
-    transition: "opacity 0.35s ease, transform 0.35s ease",
+    transition: "opacity 0.35s ease",
   };
 
-  // Flow leaves toward the next step: LTR → right side; RTL → left side.
   const sourcePos = d.rtl ? Position.Left : Position.Right;
   const targetPos = d.rtl ? Position.Right : Position.Left;
 
   return (
     <div
-      className="max-w-[240px] rounded-xl border-[2.5px] bg-[var(--surface)] px-3.5 py-3 text-center shadow-sm"
-      style={style}
+      className="relative rounded-xl border-[2.5px] bg-[var(--surface)] px-3.5 py-3 text-center shadow-sm"
+      style={{ ...style, width: "100%" }}
       dir={d.locale === "fa" ? "rtl" : "ltr"}
     >
       <Handle
+        id="target"
         type="target"
         position={targetPos}
-        className="!h-2.5 !w-2.5 !border-0 !bg-[var(--brand-cyan)]"
+        isConnectable={false}
+        className="slide-flow-handle"
       />
       <p className="text-[0.95rem] font-bold leading-snug">{d.label}</p>
       <Handle
+        id="source"
         type="source"
         position={sourcePos}
-        className="!h-2.5 !w-2.5 !border-0 !bg-[var(--brand-cyan)]"
+        isConnectable={false}
+        className="slide-flow-handle"
       />
     </div>
   );
@@ -79,9 +85,9 @@ function SlideFlowNode({ data }: NodeProps) {
 
 const nodeTypes = { slideFlow: SlideFlowNode };
 
-const NODE_W = 210;
-const NODE_GAP = 64;
-const NODE_Y = 40;
+const NODE_W = 200;
+const NODE_GAP = 72;
+const NODE_Y = 36;
 
 function buildGraph(
   steps: Array<{ id: string; label: string; pathway?: Pathway }>,
@@ -99,7 +105,6 @@ function buildGraph(
   const offsetX = -totalW / 2 + NODE_W / 2;
 
   const nodes: Node[] = steps.map((step, i) => {
-    // EN: i=0 left. FA: i=0 right (reading order).
     const slot = rtl ? n - 1 - i : i;
     return {
       id: step.id,
@@ -128,23 +133,26 @@ function buildGraph(
   for (let i = 0; i < n - 1; i++) {
     const from = steps[i].id;
     const to = steps[i + 1].id;
-    const visible = opts.revealStep > i + 1 || opts.revealStep >= 99;
+    // Show arrow once the destination step is revealed (or always dimly)
+    const lit = opts.revealStep > i + 1 || opts.revealStep >= 99;
     edges.push({
       id: `e-${from}-${to}`,
       source: from,
       target: to,
+      sourceHandle: "source",
+      targetHandle: "target",
       type: "smoothstep",
-      animated: visible,
+      animated: lit,
+      zIndex: 10,
       style: {
-        stroke: "var(--brand-cyan)",
-        strokeWidth: 3.5,
-        opacity: visible ? 1 : 0.22,
+        stroke: lit ? EDGE_STROKE : EDGE_STROKE_DIM,
+        strokeWidth: 4,
       },
       markerEnd: {
         type: MarkerType.ArrowClosed,
-        color: "var(--brand-cyan)",
-        width: 20,
-        height: 20,
+        width: 22,
+        height: 22,
+        color: lit ? EDGE_STROKE : EDGE_STROKE_DIM,
       },
     });
   }
@@ -152,32 +160,34 @@ function buildGraph(
   if (opts.cycle && n > 1) {
     const last = steps[n - 1].id;
     const first = steps[0].id;
-    const visible = opts.revealStep > n - 1 || opts.revealStep >= 99;
+    const lit = opts.revealStep > n - 1 || opts.revealStep >= 99;
     edges.push({
       id: `e-cycle-${last}-${first}`,
       source: last,
       target: first,
+      sourceHandle: "source",
+      targetHandle: "target",
       type: "smoothstep",
-      animated: visible,
+      animated: lit,
+      zIndex: 10,
       style: {
-        stroke: "var(--brand-cyan)",
-        strokeWidth: 2.75,
-        strokeDasharray: "7 5",
-        opacity: visible ? 0.95 : 0.22,
+        stroke: lit ? EDGE_STROKE : EDGE_STROKE_DIM,
+        strokeWidth: 3.5,
+        strokeDasharray: "8 5",
       },
       markerEnd: {
         type: MarkerType.ArrowClosed,
-        color: "var(--brand-cyan)",
-        width: 18,
-        height: 18,
+        width: 20,
+        height: 20,
+        color: lit ? EDGE_STROKE : EDGE_STROKE_DIM,
       },
       label: "↻",
       labelStyle: {
-        fill: "var(--brand-cyan-dark)",
+        fill: "#008a9e",
         fontWeight: 700,
         fontSize: 16,
       },
-      labelBgStyle: { fill: "var(--bg-ivory)", fillOpacity: 0.92 },
+      labelBgStyle: { fill: "#fff9f2", fillOpacity: 0.95 },
       labelBgPadding: [4, 6] as [number, number],
     });
   }
@@ -188,10 +198,10 @@ function buildGraph(
 function FitViewOnChange({ deps }: { deps: string }) {
   const { fitView } = useReactFlow();
   useEffect(() => {
-    const id = requestAnimationFrame(() => {
-      void fitView({ padding: 0.2, duration: 180 });
-    });
-    return () => cancelAnimationFrame(id);
+    const id = window.setTimeout(() => {
+      void fitView({ padding: 0.22, duration: 160, includeHiddenNodes: true });
+    }, 40);
+    return () => window.clearTimeout(id);
   }, [deps, fitView]);
   return null;
 }
@@ -233,7 +243,12 @@ export function SlideFlow({
     [steps, locale, revealStep, cycle],
   );
 
-  const onInit = useCallback(() => {}, []);
+  const onInit = useCallback(
+    (instance: { fitView: (opts?: object) => void }) => {
+      instance.fitView({ padding: 0.22, includeHiddenNodes: true });
+    },
+    [],
+  );
 
   if (!steps.length) return null;
 
@@ -259,23 +274,35 @@ export function SlideFlow({
             nodeTypes={nodeTypes}
             onInit={onInit}
             fitView
-            fitViewOptions={{ padding: 0.2 }}
+            fitViewOptions={{ padding: 0.22, includeHiddenNodes: true }}
             nodesDraggable={false}
             nodesConnectable={false}
             elementsSelectable={false}
+            edgesFocusable={false}
+            nodesFocusable={false}
             panOnDrag={false}
             zoomOnScroll={false}
             zoomOnPinch={false}
             zoomOnDoubleClick={false}
             preventScrolling
             proOptions={{ hideAttribution: true }}
-            minZoom={0.3}
-            maxZoom={1.5}
+            minZoom={0.25}
+            maxZoom={1.6}
+            defaultEdgeOptions={{
+              type: "smoothstep",
+              style: { stroke: EDGE_STROKE, strokeWidth: 4 },
+              markerEnd: {
+                type: MarkerType.ArrowClosed,
+                color: EDGE_STROKE,
+                width: 22,
+                height: 22,
+              },
+            }}
           >
             <Background
               gap={18}
               size={1}
-              color="color-mix(in srgb, var(--border) 65%, transparent)"
+              color="rgba(232, 213, 196, 0.85)"
             />
             <FitViewOnChange deps={depKey} />
           </ReactFlow>
