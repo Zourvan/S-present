@@ -13,7 +13,12 @@ export function ProcessFlow({
   flow: FlowData;
   revealStep: number;
 }) {
-  return <SlideFlow flow={flow} revealStep={revealStep} />;
+  const nodeCount = flow.nodes?.length ?? 0;
+  const height = nodeCount > 5 ? 200 : nodeCount > 3 ? 220 : 240;
+
+  return (
+    <SlideFlow flow={flow} revealStep={revealStep} height={height} />
+  );
 }
 
 export function SplitPathways({

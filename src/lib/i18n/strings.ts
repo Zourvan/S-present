@@ -73,8 +73,7 @@ export const UI_STRINGS = {
       close: "Closing",
     },
     noNotes: "No speaker notes for this slide.",
-    clickHint:
-      "Tap either edge, swipe, or use arrow keys. Scroll to step through a slide.",
+    clickHint: "Click edges or use arrow keys · Scroll to reveal",
     goToSlide: "Go to slide",
     goToSlidePlaceholder: "Go…",
     go: "Go",
@@ -174,8 +173,7 @@ export const UI_STRINGS = {
       close: "اختتامیه",
     },
     noNotes: "یادداشت سخنران برای این اسلاید موجود نیست.",
-    clickHint:
-      "لبه را لمس کنید، انگشت را بکشید، یا از کلیدهای جهت استفاده کنید. اسکرول برای نمایش مرحله‌ای.",
+    clickHint: "کلیک روی لبه‌ها یا کلیدهای جهت · اسکرول برای نمایش مرحله‌ای",
     goToSlide: "برو به اسلاید",
     goToSlidePlaceholder: "برو…",
     go: "برو",
