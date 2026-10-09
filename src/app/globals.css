@@ -252,15 +252,17 @@ html[lang="fa"] .slide-stage {
   --slide-fs: 18px;
 }
 
-/* Presentational React Flow graphs inside slides */
+/* Presentational React Flow graphs inside slides.
+   Fitting uses CSS scale on a fixed design canvas — do not rely on
+   React Flow fitView (breaks under SlideStage transform:scale). */
 .slide-flow-canvas .react-flow__attribution {
-  font-size: 9px !important;
-  opacity: 0.45;
-  background: transparent !important;
+  display: none !important;
 }
 
 .slide-flow-canvas .react-flow__renderer,
 .slide-flow-canvas .react-flow {
+  width: 100% !important;
+  height: 100% !important;
   background: transparent;
 }
 

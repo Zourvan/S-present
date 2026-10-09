@@ -25,6 +25,7 @@ import {
   ResponsibilityMatrix,
   DecisionTree,
 } from "@/components/visuals/Diagrams";
+import { SlideFlow } from "@/components/visuals/flow/SlideFlow";
 import { DeviationVisual } from "@/components/visuals/DeviationVisuals";
 import { toLocaleDigits } from "@/lib/i18n/digits";
 
@@ -427,8 +428,17 @@ function VisualBlock({
               layers={vd.items.map((item) => item.title)}
               revealStep={revealStep}
             />
+          ) : slide.visualType === "lifecycle" &&
+            vd.items?.length &&
+            !vd.flow ? (
+            <SlideFlow
+              layers={vd.items.map((item) => item.title)}
+              revealStep={revealStep}
+            />
           ) : null}
-          {vd.items && slide.visualType !== "cycle" ? (
+          {vd.items &&
+          slide.visualType !== "cycle" &&
+          slide.visualType !== "lifecycle" ? (
             <OverviewGrid items={vd.items} revealStep={revealStep} />
           ) : null}
           {vd.flow ? (

@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react"
 import {
   ReactFlow,
   EdgeLabelRenderer,
-  useReactFlow,
   ReactFlowProvider,
   getSmoothStepPath,
   Position,
@@ -23,15 +22,18 @@ type Pathway = FlowNode["pathway"];
 
 const EDGE_STROKE = "#00adc8";
 const EDGE_STROKE_DIM = "rgba(0, 173, 200, 0.42)";
+/** Layout coordinate width — scaled to the host via CSS (not React Flow fitView). */
 const DESIGN_W = 1180;
 const GUTTER = 56;
 const GAP_X = 64;
 const GAP_Y = 54;
 const TOP_PAD = 36;
-const BOTTOM_PAD = 20;
+const BOTTOM_PAD = 24;
 const ARROW = 16;
-const TOP_LANE = 12;
-const LANE_DROP = 36;
+const TOP_LANE = 14;
+const LANE_DROP = 40;
+/** Keep graphs from eating the whole slide body when many rows. */
+const MAX_CANVAS_H = 440;
 
 type SlideFlowNodeData = {
   label: string;
@@ -68,7 +70,8 @@ function pathwayText(pathway?: Pathway): string {
 function columnCount(n: number) {
   if (n <= 1) return 1;
   if (n <= 3) return n;
-  if (n === 4) return 2;
+  // Prefer 2 columns up to 6 steps — cleaner zig-zag than a 3+2 orphan row.
+  if (n <= 6) return 2;
   return 3;
 }
 
@@ -81,7 +84,7 @@ function nodeHeight(label: string, width: number) {
 function SlideFlowNode({ data }: NodeProps) {
   const d = data as SlideFlowNodeData;
   const style: CSSProperties = {
-    opacity: d.visible ? 1 : 0.38,
+    opacity: d.visible ? 1 : 0.55,
     borderColor: pathwayBorder(d.pathway),
     color: pathwayText(d.pathway),
     transition: "opacity 0.35s ease",
@@ -111,7 +114,9 @@ function SlideFlowNode({ data }: NodeProps) {
       <Handle id="bottom-source" type="source" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" style={{ left: "50%" }} />
       <Handle id="bottom-source-a" type="source" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" style={{ left: "32%" }} />
       <Handle id="bottom-source-b" type="source" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" style={{ left: "68%" }} />
-      <p className="text-[0.92rem] font-bold leading-snug">{d.label}</p>
+      <p className="max-w-full text-[0.92rem] font-bold leading-snug break-words">
+        {d.label}
+      </p>
     </div>
   );
 }
@@ -384,11 +389,15 @@ function buildGraph(
 
   const boxes = new Map<string, Box>();
   let y = TOP_PAD;
-  rows.forEach((row) => {
+  // Linear (non-cycle) flows snake row-by-row so down-edges stay short.
+  const serpentine = !opts.cycle;
+  rows.forEach((row, rowIndex) => {
     const rowH = Math.max(
       ...row.map((id) => nodeHeight(labelOf.get(id) ?? "", nodeW)),
     );
-    const order = visualOrder(row, rtl);
+    const logical =
+      serpentine && rowIndex % 2 === 1 ? [...row].reverse() : row;
+    const order = visualOrder(logical, rtl);
     const rowWidth = order.length * nodeW + (order.length - 1) * GAP_X;
     const startX = GUTTER + (inner - rowWidth) / 2;
     order.forEach((id, i) => {
@@ -518,29 +527,13 @@ function buildGraph(
         animate: opts.animate,
         feedback: true,
         laneY,
-        gutterX: 18,
+        gutterX: 22,
         topY: TOP_LANE,
       } satisfies FlowEdgeData,
     });
   }
 
   return { nodes, edges, layoutHeight, rows: rows.length };
-}
-
-function FitViewOnChange({ deps }: { deps: string }) {
-  const { fitView } = useReactFlow();
-  useEffect(() => {
-    const fit = () => {
-      void fitView({ padding: 0.1, duration: 0, includeHiddenNodes: true });
-    };
-    const id = window.setTimeout(fit, 24);
-    window.addEventListener("resize", fit);
-    return () => {
-      window.clearTimeout(id);
-      window.removeEventListener("resize", fit);
-    };
-  }, [deps, fitView]);
-  return null;
 }
 
 export function SlideFlow({
@@ -560,7 +553,7 @@ export function SlideFlow({
 }) {
   const { locale } = useApp();
   const hostRef = useRef<HTMLDivElement>(null);
-  const [sizeKey, setSizeKey] = useState("0");
+  const [hostW, setHostW] = useState(0);
   const [animate, setAnimate] = useState(true);
 
   useEffect(() => {
@@ -570,9 +563,9 @@ export function SlideFlow({
   useEffect(() => {
     const el = hostRef.current;
     if (!el) return;
-    const ro = new ResizeObserver(() => {
-      setSizeKey(`${Math.round(el.clientWidth)}x${Math.round(el.clientHeight)}`);
-    });
+    const measure = () => setHostW(el.clientWidth);
+    measure();
+    const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
@@ -606,19 +599,16 @@ export function SlideFlow({
     [steps, locale, revealStep, cycle, links, animate],
   );
 
-  const canvasHeight = Math.min(
-    400,
-    Math.max(
-      height,
-      88 + layout.rows * 118 + (cycle ? 56 : 12),
-      cycle ? 230 : 170,
-    ),
-  );
-
   if (!steps.length) return null;
 
   const heading = title ?? flow?.title;
-  const depKey = `${locale}:${steps.map((s) => s.id).join("|")}:${cycle}:${canvasHeight}:${sizeKey}:${revealStep}`;
+  const maxH = height > 0 ? height : MAX_CANVAS_H;
+  const scale =
+    hostW > 0
+      ? Math.min(hostW / DESIGN_W, maxH / Math.max(layout.layoutHeight, 1))
+      : 1;
+  const displayW = Math.max(1, Math.round(DESIGN_W * scale));
+  const displayH = Math.max(1, Math.round(layout.layoutHeight * scale));
 
   return (
     <div className="flex w-full flex-col gap-2">
@@ -629,35 +619,52 @@ export function SlideFlow({
       ) : null}
       <div
         ref={hostRef}
-        className="slide-flow-canvas relative w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg-cream)_55%,var(--surface))]"
-        style={{ height: canvasHeight }}
+        className="slide-flow-canvas relative flex w-full justify-center overflow-hidden rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg-cream)_55%,var(--surface))]"
+        style={{
+          height: displayH,
+          visibility: hostW > 0 ? "visible" : "hidden",
+        }}
         dir="ltr"
       >
-        <ReactFlowProvider>
-          <ReactFlow
-            nodes={layout.nodes}
-            edges={layout.edges}
-            nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}
-            fitView
-            fitViewOptions={{ padding: 0.1, includeHiddenNodes: true }}
-            nodesDraggable={false}
-            nodesConnectable={false}
-            elementsSelectable={false}
-            edgesFocusable={false}
-            nodesFocusable={false}
-            panOnDrag={false}
-            zoomOnScroll={false}
-            zoomOnPinch={false}
-            zoomOnDoubleClick={false}
-            preventScrolling={false}
-            minZoom={0.12}
-            maxZoom={1.4}
-            onlyRenderVisibleElements={false}
+        <div
+          className="relative shrink-0 overflow-hidden"
+          style={{ width: displayW, height: displayH }}
+        >
+          <div
+            className="absolute top-0 left-0"
+            style={{
+              width: DESIGN_W,
+              height: layout.layoutHeight,
+              transform: `scale(${scale})`,
+              transformOrigin: "top left",
+            }}
           >
-            <FitViewOnChange deps={depKey} />
-          </ReactFlow>
-        </ReactFlowProvider>
+            <ReactFlowProvider>
+              <ReactFlow
+                nodes={layout.nodes}
+                edges={layout.edges}
+                nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                style={{ width: DESIGN_W, height: layout.layoutHeight }}
+                defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+                proOptions={{ hideAttribution: true }}
+                nodesDraggable={false}
+                nodesConnectable={false}
+                elementsSelectable={false}
+                edgesFocusable={false}
+                nodesFocusable={false}
+                panOnDrag={false}
+                zoomOnScroll={false}
+                zoomOnPinch={false}
+                zoomOnDoubleClick={false}
+                preventScrolling={false}
+                minZoom={1}
+                maxZoom={1}
+                onlyRenderVisibleElements={false}
+              />
+            </ReactFlowProvider>
+          </div>
+        </div>
       </div>
     </div>
   );
