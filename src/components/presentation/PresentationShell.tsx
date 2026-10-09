@@ -47,6 +47,8 @@ export function PresentationShell() {
   const [exportOpen, setExportOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [exporting, setExporting] = useState<"pdf" | "pptx" | null>(null);
+  const [exportCount, setExportCount] = useState<string | null>(null);
+  const captureRef = useRef<SlideCaptureApi | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [direction, setDirection] = useState(1);
   const [jumpValue, setJumpValue] = useState("1");
@@ -188,16 +190,22 @@ export function PresentationShell() {
   }
 
   async function handleExport(kind: "pdf" | "pptx") {
+    if (!captureRef.current) return;
     setExporting(kind);
+    setExportCount(null);
     try {
       const exportSlides = resolveSlides(SLIDES, locale);
-      if (kind === "pdf") await exportPresentationPdf(exportSlides);
-      else await exportPresentationPptx(exportSlides);
+      const images = await captureRef.current.capture(exportSlides, (done, total) => {
+        setExportCount(`${done}/${total}`);
+      });
+      if (kind === "pdf") await exportPresentationPdf(images, locale);
+      else await exportPresentationPptx(exportSlides, images, locale);
     } catch (err) {
       console.error(err);
       alert(kind === "pdf" ? "PDF export failed." : "PPTX export failed.");
     } finally {
       setExporting(null);
+      setExportCount(null);
       setExportOpen(false);
     }
   }
@@ -298,7 +306,11 @@ export function PresentationShell() {
               onClick={() => setExportOpen((v) => !v)}
               active={exportOpen}
             >
-              {exporting ? strings.exporting : strings.export}
+              {exporting
+                ? exportCount
+                  ? `${strings.exporting} ${exportCount}`
+                  : strings.exporting
+                : strings.export}
             </ChromeButton>
             {exportOpen ? (
               <div
@@ -624,6 +636,7 @@ export function PresentationShell() {
           </nav>
         </div>
       ) : null}
+      <SlideCapture api={captureRef} />
     </div>
   );
 }

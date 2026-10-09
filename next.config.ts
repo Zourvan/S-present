@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* Standalone output for Docker / Runflare image deploys */
-  output: "standalone",
+  // Keep classic `next start` for Runflare Next.js runtime
+  // (standalone breaks `next start` on their Node hosting).
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {
