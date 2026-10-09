@@ -1,6 +1,49 @@
 @import "tailwindcss";
 
+/* Self-hosted fonts from /public/fonts — no Google / CDN at runtime */
+@font-face {
+  font-family: "Source Sans 3";
+  src: url("/fonts/SourceSans3-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Source Sans 3";
+  src: url("/fonts/SourceSans3-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Source Sans 3";
+  src: url("/fonts/SourceSans3-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("/fonts/Vazirmatn-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("/fonts/Vazirmatn-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
+  --font-source-sans: "Source Sans 3", "Segoe UI", sans-serif;
+  --font-vazirmatn: "Vazirmatn", "Source Sans 3", "Segoe UI", sans-serif;
   --brand-cyan: #00adc8;
   --brand-cyan-dark: #008a9e;
   --bg-cream: #f4e7d6;
@@ -83,7 +126,7 @@ body {
 body {
   background: var(--bg-cream);
   color: var(--text-ink);
-  font-family: var(--font-source-sans), "Segoe UI", sans-serif;
+  font-family: var(--font-source-sans);
   overflow: hidden;
 }
 
@@ -201,8 +244,7 @@ html[data-text-bold="true"] .slide-stage .font-extrabold {
 html[lang="fa"],
 html[lang="fa"] body,
 html[lang="fa"] .slide-stage {
-  font-family: var(--font-vazirmatn), var(--font-source-sans), "Segoe UI",
-    sans-serif;
+  font-family: var(--font-vazirmatn);
 }
 
 html[lang="fa"] .slide-stage {
