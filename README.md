@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GMP Presentation
 
-## Getting Started
+Interactive slide deck for **Ronagen** (روناژن): *GMP in Pharmaceutical Manufacturing*. It covers a shared pharmaceutical quality system with separate pathways for conventional oral medicines and biotechnology-derived products. The interface is available in English and Persian.
 
-First, run the development server:
+## Requirements
+
+- Node.js 20.9 or later
+- npm
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). If that port is taken, use the URL printed by Next.js.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Production build |
+| `npm run start` | Serve the production build |
+| `npm run lint` | Run ESLint |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Controls
 
-## Learn More
+| Action | How |
+| --- | --- |
+| Next reveal, then next slide | Right arrow, Page Down, Space, or Enter |
+| Previous reveal, then previous slide | Left arrow or Page Up |
+| First / last slide | Home / End |
+| Table of contents | `C` |
+| Speaker notes | `N` |
+| Fullscreen | `F` |
+| Close overlays | Escape |
 
-To learn more about Next.js, take a look at the following resources:
+Click the left or right edge of the stage to move, and scroll to step through reveals. The toolbar also switches light and dark theme, English and Persian, and exports the deck.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deck
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The deck is 63 slides, assembled in `src/lib/slides/index.ts`.
 
-## Deploy on Vercel
+| Section | File |
+| --- | --- |
+| Opening | `src/lib/slides/section-open.ts` |
+| Foundations and regulatory framework | `src/lib/slides/section-foundations.ts` |
+| Personnel, facilities, and operations | `src/lib/slides/section-operations.ts` |
+| Manufacturing technologies | `src/lib/slides/section-manufacturing.ts` |
+| QC, validation, and digital systems | `src/lib/slides/section-qc.ts` |
+| Quality events and implementation | `src/lib/slides/section-lifecycle.ts` and `section-deviations.ts` |
+| Closing | `src/lib/slides/section-close.ts` |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+English is the source language. Persian copy lives in the matching `*.fa.ts` files and is merged at runtime by `src/lib/slides/resolve.ts`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Pathway colors: oral (coral), biotech (burgundy), shared controls (Ronagen cyan).
+
+## Editing content
+
+Presenter name and role are in `src/lib/slides/section-open.ts` (`s01-presenter`). The Persian presenter fields are in `src/lib/slides/section-open.fa.ts`.
+
+To change a slide, edit its English object, then the matching override in the `*.fa.ts` file if Persian should differ. UI chrome strings are in `src/lib/i18n/strings.ts`.
+
+The logo is `public/brand/ronagen-logo.svg`. Persian text uses Vazirmatn from `public/fonts/`.
+
+## Export
+
+Use **Export** in the toolbar to download a PDF (`jspdf`) or a PowerPoint file (`pptxgenjs`). Export logic is in `src/lib/export/`.
+
+## Project layout
+
+```
+src/app/                  Next.js App Router entry
+src/components/presentation/   shell, stage, and slide renderer
+src/components/visuals/   charts, flows, and diagrams
+src/lib/slides/           slide content (English and Persian)
+src/lib/export/           PDF and PowerPoint export
+src/lib/i18n/             interface strings
+public/brand/             logo
+public/fonts/             Vazirmatn
+```
+
+## Stack
+
+Next.js App Router, React, TypeScript, Tailwind CSS v4, Framer Motion, and `@xyflow/react`.
