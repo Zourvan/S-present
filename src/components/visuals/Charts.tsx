@@ -196,11 +196,12 @@ export function RiskMatrixVisual({
   const visible = revealStep > 0 || revealStep >= 99;
 
   const colLabels = [strings.lowProb, strings.medProb, strings.highProb];
+  // Row 0 is the top of the chart (high severity). Risk rises with both severity and probability.
   const rowLabels = [strings.highSev, strings.medSev, strings.lowSev];
   const cells = [
-    [strings.riskLow, strings.riskMed, strings.riskHigh],
-    [strings.riskMed, strings.riskHigh, strings.riskHigh],
     [strings.riskHigh, strings.riskHigh, strings.riskCritical],
+    [strings.riskMed, strings.riskHigh, strings.riskHigh],
+    [strings.riskLow, strings.riskMed, strings.riskHigh],
   ];
 
   const bandKey = (v: string) => {
