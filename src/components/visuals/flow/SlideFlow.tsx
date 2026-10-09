@@ -651,7 +651,6 @@ export function SlideFlow({
             zoomOnPinch={false}
             zoomOnDoubleClick={false}
             preventScrolling={false}
-            proOptions={{ hideAttribution: true }}
             minZoom={0.12}
             maxZoom={1.4}
             onlyRenderVisibleElements={false}

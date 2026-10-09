@@ -212,7 +212,9 @@ html[lang="fa"] .slide-stage {
 
 /* Presentational React Flow graphs inside slides */
 .slide-flow-canvas .react-flow__attribution {
-  display: none;
+  font-size: 9px !important;
+  opacity: 0.45;
+  background: transparent !important;
 }
 
 .slide-flow-canvas .react-flow__renderer,
