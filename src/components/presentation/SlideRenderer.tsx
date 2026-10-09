@@ -420,13 +420,15 @@ function VisualBlock({
     case "relationship":
       return (
         <div className="flex h-full flex-col justify-center gap-3">
-          {(vd.layers?.length || slide.content.length) && !vd.flow ? (
+          {vd.layers?.length ? (
+            <CycleDiagram layers={vd.layers} revealStep={revealStep} />
+          ) : slide.visualType === "cycle" && vd.items?.length && !vd.flow ? (
             <CycleDiagram
-              layers={vd.layers ?? slide.content}
+              layers={vd.items.map((item) => item.title)}
               revealStep={revealStep}
             />
           ) : null}
-          {vd.items ? (
+          {vd.items && slide.visualType !== "cycle" ? (
             <OverviewGrid items={vd.items} revealStep={revealStep} />
           ) : null}
           {vd.flow ? (

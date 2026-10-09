@@ -231,13 +231,19 @@ html[lang="fa"] .slide-stage {
   pointer-events: none !important;
 }
 
-.slide-flow-canvas .react-flow__edges {
+.slide-flow-canvas .react-flow__viewport,
+.slide-flow-canvas .react-flow__edges,
+.slide-flow-canvas .react-flow__edge-labels {
+  overflow: visible !important;
+}
+
+.slide-flow-canvas svg {
   overflow: visible !important;
 }
 
 .slide-flow-canvas .slide-flow-edge-motion {
   stroke-dasharray: 10 12;
-  animation: slide-flow-dash 0.7s linear infinite;
+  animation: slide-flow-dash 0.75s linear infinite;
 }
 
 .slide-flow-canvas .slide-flow-handle {

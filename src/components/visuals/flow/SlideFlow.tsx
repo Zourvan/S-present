@@ -22,15 +22,16 @@ import { useApp } from "@/lib/providers/AppProviders";
 type Pathway = FlowNode["pathway"];
 
 const EDGE_STROKE = "#00adc8";
-const EDGE_STROKE_DIM = "rgba(0, 173, 200, 0.4)";
-const DESIGN_W = 1160;
-const GUTTER = 52;
-const GAP_X = 68;
-const GAP_Y = 58;
-const TOP_PAD = 40;
-const ARROW = 14;
-const TOP_LANE = 14;
-const LANE_DROP = 34;
+const EDGE_STROKE_DIM = "rgba(0, 173, 200, 0.42)";
+const DESIGN_W = 1180;
+const GUTTER = 56;
+const GAP_X = 64;
+const GAP_Y = 54;
+const TOP_PAD = 36;
+const BOTTOM_PAD = 20;
+const ARROW = 16;
+const TOP_LANE = 12;
+const LANE_DROP = 36;
 
 type SlideFlowNodeData = {
   label: string;
@@ -63,16 +64,18 @@ function pathwayText(pathway?: Pathway): string {
   return "#008a9e";
 }
 
+/** Pack into 2–3 columns so long chains become multiple rows. */
 function columnCount(n: number) {
   if (n <= 1) return 1;
-  if (n === 2 || n === 4) return 2;
+  if (n <= 3) return n;
+  if (n === 4) return 2;
   return 3;
 }
 
 function nodeHeight(label: string, width: number) {
-  const chars = Math.max(10, Math.floor((width - 28) / 8.4));
-  const lines = Math.min(4, Math.max(1, Math.ceil(label.length / chars)));
-  return 22 + lines * 24;
+  const chars = Math.max(10, Math.floor((width - 28) / 8.2));
+  const lines = Math.min(3, Math.max(1, Math.ceil(label.length / chars)));
+  return 26 + lines * 22;
 }
 
 function SlideFlowNode({ data }: NodeProps) {
@@ -90,14 +93,24 @@ function SlideFlowNode({ data }: NodeProps) {
       style={style}
       dir={d.locale === "fa" ? "rtl" : "ltr"}
     >
-      <Handle id="left-target" type="target" position={Position.Left} isConnectable={false} className="slide-flow-handle" />
-      <Handle id="left-source" type="source" position={Position.Left} isConnectable={false} className="slide-flow-handle" />
-      <Handle id="right-target" type="target" position={Position.Right} isConnectable={false} className="slide-flow-handle" />
-      <Handle id="right-source" type="source" position={Position.Right} isConnectable={false} className="slide-flow-handle" />
-      <Handle id="top-target" type="target" position={Position.Top} isConnectable={false} className="slide-flow-handle" />
-      <Handle id="top-source" type="source" position={Position.Top} isConnectable={false} className="slide-flow-handle" />
-      <Handle id="bottom-target" type="target" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" />
-      <Handle id="bottom-source" type="source" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" />
+      <Handle id="left-target" type="target" position={Position.Left} isConnectable={false} className="slide-flow-handle" style={{ top: "50%" }} />
+      <Handle id="left-target-a" type="target" position={Position.Left} isConnectable={false} className="slide-flow-handle" style={{ top: "32%" }} />
+      <Handle id="left-target-b" type="target" position={Position.Left} isConnectable={false} className="slide-flow-handle" style={{ top: "68%" }} />
+      <Handle id="left-source" type="source" position={Position.Left} isConnectable={false} className="slide-flow-handle" style={{ top: "50%" }} />
+      <Handle id="right-target" type="target" position={Position.Right} isConnectable={false} className="slide-flow-handle" style={{ top: "50%" }} />
+      <Handle id="right-source" type="source" position={Position.Right} isConnectable={false} className="slide-flow-handle" style={{ top: "50%" }} />
+      <Handle id="right-source-a" type="source" position={Position.Right} isConnectable={false} className="slide-flow-handle" style={{ top: "32%" }} />
+      <Handle id="right-source-b" type="source" position={Position.Right} isConnectable={false} className="slide-flow-handle" style={{ top: "68%" }} />
+      <Handle id="top-target" type="target" position={Position.Top} isConnectable={false} className="slide-flow-handle" style={{ left: "50%" }} />
+      <Handle id="top-target-a" type="target" position={Position.Top} isConnectable={false} className="slide-flow-handle" style={{ left: "32%" }} />
+      <Handle id="top-target-b" type="target" position={Position.Top} isConnectable={false} className="slide-flow-handle" style={{ left: "68%" }} />
+      <Handle id="top-source" type="source" position={Position.Top} isConnectable={false} className="slide-flow-handle" style={{ left: "50%" }} />
+      <Handle id="bottom-target" type="target" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" style={{ left: "50%" }} />
+      <Handle id="bottom-target-a" type="target" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" style={{ left: "32%" }} />
+      <Handle id="bottom-target-b" type="target" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" style={{ left: "68%" }} />
+      <Handle id="bottom-source" type="source" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" style={{ left: "50%" }} />
+      <Handle id="bottom-source-a" type="source" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" style={{ left: "32%" }} />
+      <Handle id="bottom-source-b" type="source" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" style={{ left: "68%" }} />
       <p className="text-[0.92rem] font-bold leading-snug">{d.label}</p>
     </div>
   );
@@ -110,7 +123,7 @@ function FlowBoundsNode() {
 const nodeTypes = { slideFlow: SlideFlowNode, flowBounds: FlowBoundsNode };
 
 function tipOutside(x: number, y: number, position: Position) {
-  const pad = 3;
+  const pad = 2;
   switch (position) {
     case Position.Left:
       return { x: x - pad, y, dir: "right" as const };
@@ -201,6 +214,7 @@ function EdgeStroke({
       strokeLinecap="round"
       strokeLinejoin="round"
       className={animate ? "slide-flow-edge-motion" : undefined}
+      vectorEffect="non-scaling-stroke"
     />
   );
 }
@@ -220,7 +234,7 @@ function FlowEdge({
 
   if (edgeData.feedback) {
     const laneY = edgeData.laneY ?? Math.max(sourceY, targetY) + LANE_DROP + 20;
-    const gutterX = edgeData.gutterX ?? 16;
+    const gutterX = edgeData.gutterX ?? 18;
     const topY = edgeData.topY ?? TOP_LANE;
     const tip = tipOutside(targetX, targetY, targetPosition);
     const end = lineEnd(tip.x, tip.y, tip.dir);
@@ -238,11 +252,11 @@ function FlowEdge({
     const labelX = (sourceX + gutterX) / 2;
     return (
       <>
-        <EdgeStroke d={d} color={color} width={3.25} animate={animate} />
+        <EdgeStroke d={d} color={color} width={3.75} animate={animate} />
         <ArrowHead x={tip.x} y={tip.y} dir={tip.dir} color={color} />
         <EdgeLabelRenderer>
           <div
-            className="nodrag nopan rounded-full border border-[#00adc8] bg-[var(--surface)] px-1.5 py-0.5 text-sm font-bold leading-none text-[#008a9e]"
+            className="nodrag nopan rounded-full border border-[#00adc8] bg-[var(--surface)] px-1.5 py-0.5 text-sm font-bold leading-none text-[#008a9e] shadow-sm"
             style={{
               position: "absolute",
               transform: `translate(-50%, -50%) translate(${labelX}px, ${laneY}px)`,
@@ -266,15 +280,23 @@ function FlowEdge({
     targetY: end.y,
     targetPosition,
     borderRadius: 16,
-    offset: 20,
+    offset: 22,
   });
 
   return (
     <>
-      <EdgeStroke d={path} color={color} width={3.5} animate={animate} />
+      <EdgeStroke d={path} color={color} width={3.75} animate={animate} />
       <ArrowHead x={tip.x} y={tip.y} dir={tip.dir} color={color} />
     </>
   );
+}
+
+function pickSlot(index: number, total: number): "" | "-a" | "-b" {
+  if (total <= 1) return "";
+  if (total === 2) return index === 0 ? "-a" : "-b";
+  if (index === 0) return "-a";
+  if (index === total - 1) return "-b";
+  return "";
 }
 
 const edgeTypes = { flowStep: FlowEdge };
@@ -315,14 +337,14 @@ function buildGraph(
     links: Array<{ from: string; to: string }>;
     animate: boolean;
   },
-): { nodes: Node[]; edges: Edge[]; rows: number } {
+): { nodes: Node[]; edges: Edge[]; layoutHeight: number; rows: number } {
   const n = steps.length;
-  if (n === 0) return { nodes: [], edges: [], rows: 0 };
+  if (n === 0) return { nodes: [], edges: [], layoutHeight: 0, rows: 0 };
 
   const rtl = opts.locale === "fa";
   const cols = columnCount(n);
   const inner = DESIGN_W - GUTTER * 2;
-  const nodeW = Math.min(420, Math.floor((inner - (cols - 1) * GAP_X) / cols));
+  const nodeW = Math.min(400, Math.floor((inner - (cols - 1) * GAP_X) / cols));
   const rank = ranksOf(
     steps.map((step) => step.id),
     opts.links,
@@ -382,7 +404,9 @@ function buildGraph(
 
   const contentBottom = y - GAP_Y;
   const laneY = contentBottom + LANE_DROP;
-  const layoutHeight = opts.cycle ? laneY + 26 : contentBottom + 18;
+  const layoutHeight = opts.cycle
+    ? laneY + BOTTOM_PAD + 8
+    : contentBottom + BOTTOM_PAD;
 
   const nodes: Node[] = [
     {
@@ -426,34 +450,42 @@ function buildGraph(
     }),
   ];
 
+  const outCount = new Map<string, number>();
+  const inCount = new Map<string, number>();
+  const outIndex = new Map<string, number>();
+  const inIndex = new Map<string, number>();
+  for (const link of opts.links) {
+    outCount.set(link.from, (outCount.get(link.from) ?? 0) + 1);
+    inCount.set(link.to, (inCount.get(link.to) ?? 0) + 1);
+  }
+
   const edges: Edge[] = opts.links.map((link) => {
     const source = boxes.get(link.from);
     const target = boxes.get(link.to);
     const targetIndex = indexOf.get(link.to) ?? 0;
     const lit = opts.revealStep > targetIndex || opts.revealStep >= 99;
-    let sourceHandle = "right-source";
-    let targetHandle = "left-target";
-    let sourcePosition = Position.Right;
-    let targetPosition = Position.Left;
+    const oi = outIndex.get(link.from) ?? 0;
+    outIndex.set(link.from, oi + 1);
+    const ii = inIndex.get(link.to) ?? 0;
+    inIndex.set(link.to, ii + 1);
+    const oSlot = pickSlot(oi, outCount.get(link.from) ?? 1);
+    const iSlot = pickSlot(ii, inCount.get(link.to) ?? 1);
+
+    let sourceHandle = `right-source${oSlot}`;
+    let targetHandle = `left-target${iSlot}`;
 
     if (source && target) {
       const sameRow = Math.abs(source.y - target.y) < 4;
       if (sameRow) {
         const targetOnRight = target.x >= source.x;
-        sourceHandle = targetOnRight ? "right-source" : "left-source";
-        targetHandle = targetOnRight ? "left-target" : "right-target";
-        sourcePosition = targetOnRight ? Position.Right : Position.Left;
-        targetPosition = targetOnRight ? Position.Left : Position.Right;
+        sourceHandle = targetOnRight ? `right-source${oSlot}` : `left-source`;
+        targetHandle = targetOnRight ? `left-target${iSlot}` : `right-target`;
       } else if (target.y > source.y) {
-        sourceHandle = "bottom-source";
-        targetHandle = "top-target";
-        sourcePosition = Position.Bottom;
-        targetPosition = Position.Top;
+        sourceHandle = `bottom-source${oSlot}`;
+        targetHandle = `top-target${iSlot}`;
       } else {
-        sourceHandle = "top-source";
-        targetHandle = "bottom-target";
-        sourcePosition = Position.Top;
-        targetPosition = Position.Bottom;
+        sourceHandle = `top-source`;
+        targetHandle = `bottom-target${iSlot}`;
       }
     }
 
@@ -463,8 +495,6 @@ function buildGraph(
       target: link.to,
       sourceHandle,
       targetHandle,
-      sourcePosition,
-      targetPosition,
       type: "flowStep",
       zIndex: 1,
       data: { lit, animate: opts.animate } satisfies FlowEdgeData,
@@ -481,8 +511,6 @@ function buildGraph(
       target: first,
       sourceHandle: "bottom-source",
       targetHandle: "top-target",
-      sourcePosition: Position.Bottom,
-      targetPosition: Position.Top,
       type: "flowStep",
       zIndex: 1,
       data: {
@@ -490,22 +518,22 @@ function buildGraph(
         animate: opts.animate,
         feedback: true,
         laneY,
-        gutterX: 16,
+        gutterX: 18,
         topY: TOP_LANE,
       } satisfies FlowEdgeData,
     });
   }
 
-  return { nodes, edges, rows: rows.length };
+  return { nodes, edges, layoutHeight, rows: rows.length };
 }
 
 function FitViewOnChange({ deps }: { deps: string }) {
   const { fitView } = useReactFlow();
   useEffect(() => {
     const fit = () => {
-      void fitView({ padding: 0.08, duration: 0, includeHiddenNodes: true });
+      void fitView({ padding: 0.1, duration: 0, includeHiddenNodes: true });
     };
-    const id = window.setTimeout(fit, 30);
+    const id = window.setTimeout(fit, 24);
     window.addEventListener("resize", fit);
     return () => {
       window.clearTimeout(id);
@@ -533,6 +561,11 @@ export function SlideFlow({
   const { locale } = useApp();
   const hostRef = useRef<HTMLDivElement>(null);
   const [sizeKey, setSizeKey] = useState("0");
+  const [animate, setAnimate] = useState(true);
+
+  useEffect(() => {
+    setAnimate(document.documentElement.dataset.slideExport !== "1");
+  }, []);
 
   useEffect(() => {
     const el = hostRef.current;
@@ -568,23 +601,24 @@ export function SlideFlow({
     return sequential;
   }, [flow, steps]);
 
-  const animate =
-    typeof document !== "undefined" &&
-    document.documentElement.dataset.slideExport !== "1";
-
   const layout = useMemo(
     () => buildGraph(steps, { locale, revealStep, cycle, links, animate }),
     [steps, locale, revealStep, cycle, links, animate],
   );
 
-  const suggested =
-    layout.rows <= 1 ? 176 : layout.rows === 2 ? 292 : Math.min(380, 108 + layout.rows * 92);
-  const canvasHeight = Math.max(height, suggested + (cycle ? 18 : 0));
+  const canvasHeight = Math.min(
+    400,
+    Math.max(
+      height,
+      88 + layout.rows * 118 + (cycle ? 56 : 12),
+      cycle ? 230 : 170,
+    ),
+  );
 
   if (!steps.length) return null;
 
   const heading = title ?? flow?.title;
-  const depKey = `${locale}:${steps.map((step) => step.id).join("|")}:${cycle}:${canvasHeight}:${sizeKey}`;
+  const depKey = `${locale}:${steps.map((s) => s.id).join("|")}:${cycle}:${canvasHeight}:${sizeKey}:${revealStep}`;
 
   return (
     <div className="flex w-full flex-col gap-2">
@@ -606,7 +640,7 @@ export function SlideFlow({
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             fitView
-            fitViewOptions={{ padding: 0.08, includeHiddenNodes: true }}
+            fitViewOptions={{ padding: 0.1, includeHiddenNodes: true }}
             nodesDraggable={false}
             nodesConnectable={false}
             elementsSelectable={false}
@@ -618,8 +652,9 @@ export function SlideFlow({
             zoomOnDoubleClick={false}
             preventScrolling={false}
             proOptions={{ hideAttribution: true }}
-            minZoom={0.15}
-            maxZoom={1.5}
+            minZoom={0.12}
+            maxZoom={1.4}
+            onlyRenderVisibleElements={false}
           >
             <FitViewOnChange deps={depKey} />
           </ReactFlow>

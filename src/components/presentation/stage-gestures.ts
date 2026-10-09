@@ -39,11 +39,7 @@ export function stageGestureAction(input: StageGestureInput): StageGestureAction
   const touchLike =
     input.pointerType === "touch" || input.pointerType === "pen";
 
-  if (
-    touchLike &&
-    !input.fromScreenEdge &&
-    input.elapsedMs <= SWIPE_MAX_MS
-  ) {
+  if (touchLike && input.elapsedMs <= SWIPE_MAX_MS) {
     const horizontal = absX > absY * AXIS_RATIO;
     const vertical = absY > absX * AXIS_RATIO;
     const flicked =
@@ -56,12 +52,14 @@ export function stageGestureAction(input: StageGestureInput): StageGestureAction
       !input.blockHorizontal &&
       (absX >= SWIPE_DISTANCE || (flicked && absX >= FLICK_DISTANCE))
     ) {
+      // Leave left-edge back-swipe to the browser / OS.
       if (input.fromScreenEdge && input.dx > 0) return "none";
       return input.dx < 0 ? "advance" : "retreat";
     }
     if (
       vertical &&
       !input.blockVertical &&
+      !input.fromScreenEdge &&
       (absY >= SWIPE_DISTANCE || (flicked && absY >= FLICK_DISTANCE))
     ) {
       return input.dy < 0 ? "advance" : "retreat";
