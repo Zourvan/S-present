@@ -12,15 +12,7 @@ export function CycleDiagram({
   layers?: string[];
   revealStep: number;
 }) {
-  const height = layers.length > 4 ? 240 : 260;
-  return (
-    <SlideFlow
-      layers={layers}
-      revealStep={revealStep}
-      cycle
-      height={height}
-    />
-  );
+  return <SlideFlow layers={layers} revealStep={revealStep} cycle />;
 }
 
 export function HierarchyLayers({

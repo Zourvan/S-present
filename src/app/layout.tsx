@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Source_Sans_3 } from "next/font/google";
 import localFont from "next/font/local";
 import { AppProviders } from "@/lib/providers/AppProviders";
@@ -26,6 +26,12 @@ const vazirmatn = localFont({
   variable: "--font-vazirmatn",
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: "GMP in Pharmaceutical Manufacturing | Ronagen",

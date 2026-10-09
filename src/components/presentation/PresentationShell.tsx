@@ -17,6 +17,8 @@ import { ChromeButton } from "@/components/ui/ChromeButton";
 import { BrandLogo } from "@/components/ui/BrandLogo";
 import { SlideRenderer } from "./SlideRenderer";
 import { SlideStage } from "./SlideStage";
+import { findScroller } from "./stage-gestures";
+import { useStageGestures } from "./useStageGestures";
 import { exportPresentationPdf } from "@/lib/export/pdf";
 import { exportPresentationPptx } from "@/lib/export/pptx";
 import { usePrefersReducedMotion } from "@/components/visuals/Reveal";
@@ -47,9 +49,11 @@ export function PresentationShell() {
   const [moreOpen, setMoreOpen] = useState(false);
   const [exporting, setExporting] = useState<"pdf" | "pptx" | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [chromeHidden, setChromeHidden] = useState(false);
   const [direction, setDirection] = useState(1);
   const [jumpValue, setJumpValue] = useState("1");
   const wheelLock = useRef(false);
+  const presenting = isFullscreen || chromeHidden;
 
   const slide = useMemo(() => {
     const base = SLIDES[index];
@@ -116,6 +120,58 @@ export function PresentationShell() {
     return true;
   }, [jumpValue, goTo]);
 
+  const armGestureLock = useCallback(() => {
+    wheelLock.current = true;
+    window.setTimeout(() => {
+      wheelLock.current = false;
+    }, 340);
+  }, []);
+
+  const gestureAdvance = useCallback(() => {
+    if (wheelLock.current) return;
+    armGestureLock();
+    advance();
+  }, [advance, armGestureLock]);
+
+  const gestureRetreat = useCallback(() => {
+    if (wheelLock.current) return;
+    armGestureLock();
+    retreat();
+  }, [retreat, armGestureLock]);
+
+  const stageRef = useStageGestures(gestureAdvance, gestureRetreat);
+
+  const toggleFullscreen = useCallback(async () => {
+    if (document.fullscreenElement) {
+      try {
+        await document.exitFullscreen();
+      } catch {
+        /* already left fullscreen */
+      }
+      setChromeHidden(false);
+      return;
+    }
+    if (chromeHidden) {
+      setChromeHidden(false);
+      return;
+    }
+    const root = document.documentElement as HTMLElement & {
+      webkitRequestFullscreen?: () => Promise<void> | void;
+    };
+    const request =
+      root.requestFullscreen?.bind(root) ??
+      root.webkitRequestFullscreen?.bind(root);
+    if (!request) {
+      setChromeHidden(true);
+      return;
+    }
+    try {
+      await request();
+    } catch {
+      setChromeHidden(true);
+    }
+  }, [chromeHidden]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName;
@@ -123,6 +179,7 @@ export function PresentationShell() {
 
       if (e.key === "Escape") {
         closeOverlays();
+        setChromeHidden(false);
         return;
       }
       if (e.key === "ArrowRight" || e.key === "PageDown") {
@@ -150,7 +207,7 @@ export function PresentationShell() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [advance, retreat, goTo, closeOverlays]);
+  }, [advance, retreat, goTo, closeOverlays, toggleFullscreen]);
 
   useEffect(() => {
     const onFs = () => setIsFullscreen(Boolean(document.fullscreenElement));
@@ -158,32 +215,27 @@ export function PresentationShell() {
     return () => document.removeEventListener("fullscreenchange", onFs);
   }, []);
 
-  async function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      await document.documentElement.requestFullscreen?.();
-    } else {
-      await document.exitFullscreen?.();
-    }
-  }
-
   function onWheel(e: WheelEvent) {
-    if (wheelLock.current) return;
-    if (Math.abs(e.deltaY) < 20) return;
+    if (e.ctrlKey || wheelLock.current) return;
+    const target = e.target;
+    if (target instanceof Element && target.closest("[data-no-nav]")) return;
+    const absX = Math.abs(e.deltaX);
+    const absY = Math.abs(e.deltaY);
+    const horizontal = absX > absY;
+    const dominant = horizontal ? e.deltaX : e.deltaY;
+    if (Math.abs(dominant) < 20) return;
+    if (
+      e.currentTarget instanceof Element &&
+      findScroller(target, e.currentTarget, horizontal ? "x" : "y")
+    ) {
+      return;
+    }
     wheelLock.current = true;
-    if (e.deltaY > 0) advance();
+    if (dominant > 0) advance();
     else retreat();
     window.setTimeout(() => {
       wheelLock.current = false;
     }, 350);
-  }
-
-  function onStageClick(e: React.MouseEvent<HTMLDivElement>) {
-    const target = e.target as HTMLElement;
-    if (target.closest("a,button,input,textarea,[data-no-nav]")) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    if (x > rect.width * 0.55) advance();
-    else if (x < rect.width * 0.45) retreat();
   }
 
   async function handleExport(kind: "pdf" | "pptx") {
@@ -205,10 +257,10 @@ export function PresentationShell() {
 
   return (
     <div
-      className="flex h-dvh flex-col bg-[var(--bg-cream)] text-[var(--chrome-fg)]"
-      data-presentation-fs={isFullscreen ? "true" : "false"}
+      className="presentation-root flex h-dvh flex-col bg-[var(--bg-cream)] text-[var(--chrome-fg)]"
+      data-presentation-fs={presenting ? "true" : "false"}
     >
-      <header className="presentation-chrome no-print relative z-40 flex shrink-0 items-center gap-1.5 border-b border-[var(--border)] bg-[var(--chrome-bg)] px-2 py-1.5 backdrop-blur sm:gap-2 sm:px-3 sm:py-2">
+      <header className="presentation-chrome presentation-header no-print relative z-40 flex shrink-0 items-center gap-1.5 border-b border-[var(--border)] bg-[var(--chrome-bg)] px-2 py-1.5 backdrop-blur sm:gap-2 sm:px-3 sm:py-2">
         <div className="me-auto flex min-w-0 items-center gap-2">
           <BrandLogo size="header" className="shrink-0" />
           <span className="truncate text-sm font-bold text-[var(--brand-cyan)]">
@@ -240,9 +292,9 @@ export function PresentationShell() {
           onClick={() => void toggleFullscreen()}
           className="max-sm:px-2"
         >
-          <span className="sm:hidden">{isFullscreen ? "✕" : "⛶"}</span>
+          <span className="sm:hidden">{presenting ? "✕" : "⛶"}</span>
           <span className="hidden sm:inline">
-            {isFullscreen ? strings.exitFullscreen : strings.fullscreen}
+            {presenting ? strings.exitFullscreen : strings.fullscreen}
           </span>
         </ChromeButton>
 
@@ -424,9 +476,10 @@ export function PresentationShell() {
 
       <div className="relative flex min-h-0 flex-1">
         <main
+          ref={stageRef}
           className="presentation-main relative flex min-h-0 min-w-0 flex-1 items-stretch justify-center p-2 sm:p-3 md:p-4"
           onWheel={onWheel}
-          onClick={onStageClick}
+          aria-label={strings.clickHint}
         >
           <SlideStage>
             <AnimatePresence mode="wait" custom={direction}>
@@ -471,11 +524,14 @@ export function PresentationShell() {
         ) : null}
       </div>
 
-      <footer className="presentation-chrome no-print flex shrink-0 items-center gap-2 border-t border-[var(--border)] bg-[var(--chrome-bg)] px-2 py-1.5 sm:gap-3 sm:px-3 sm:py-2">
+      <footer
+        dir="ltr"
+        className="presentation-chrome presentation-footer no-print flex shrink-0 items-center gap-2 border-t border-[var(--border)] bg-[var(--chrome-bg)] px-2 py-1.5 sm:gap-3 sm:px-3 sm:py-2"
+      >
         <ChromeButton
           onClick={retreat}
           disabled={index === 0 && revealStep <= 1}
-          className="max-sm:px-2"
+          className="presentation-nav-btn max-sm:px-2"
         >
           <span className="sm:hidden">←</span>
           <span className="hidden sm:inline">{strings.previous}</span>
@@ -513,7 +569,7 @@ export function PresentationShell() {
             placeholder={strings.goToSlidePlaceholder}
             value={jumpValue}
             onChange={(e) => setJumpValue(e.target.value)}
-            className="w-14 rounded-md border border-[var(--border)] bg-[var(--surface)] px-1.5 py-1 text-center text-xs font-semibold tabular-nums text-[var(--text-ink)] outline-none focus:border-[var(--brand-cyan)] sm:w-16"
+            className="presentation-jump-input w-14 rounded-md border border-[var(--border)] bg-[var(--surface)] px-1.5 py-1 text-center text-xs font-semibold tabular-nums text-[var(--text-ink)] outline-none focus:border-[var(--brand-cyan)] sm:w-16"
           />
           <ChromeButton type="submit" className="max-sm:px-2" aria-label={strings.goToSlide}>
             {strings.go}
@@ -522,7 +578,7 @@ export function PresentationShell() {
         <ChromeButton
           onClick={advance}
           disabled={index === TOTAL_SLIDES - 1 && revealStep >= maxReveal}
-          className="max-sm:px-2"
+          className="presentation-nav-btn max-sm:px-2"
         >
           <span className="sm:hidden">→</span>
           <span className="hidden sm:inline">{strings.next}</span>
@@ -530,10 +586,10 @@ export function PresentationShell() {
       </footer>
 
       {/* Floating exit fullscreen control */}
-      {isFullscreen ? (
+      {presenting ? (
         <button
           type="button"
-          className="no-print fixed right-3 top-3 z-50 rounded-md border border-[var(--border)] bg-[var(--surface)]/90 px-2.5 py-1.5 text-xs font-semibold shadow backdrop-blur hover:border-[var(--brand-cyan)]"
+          className="presentation-exit-fs no-print fixed z-50 rounded-md border border-[var(--border)] bg-[var(--surface)]/90 px-2.5 py-1.5 text-xs font-semibold shadow backdrop-blur hover:border-[var(--brand-cyan)]"
           onClick={() => void toggleFullscreen()}
           data-no-nav
         >
@@ -575,7 +631,7 @@ export function PresentationShell() {
                 placeholder={`${toLocaleDigits(1, locale)}–${toLocaleDigits(TOTAL_SLIDES, locale)}`}
                 value={jumpValue}
                 onChange={(e) => setJumpValue(e.target.value)}
-                className="min-w-0 flex-1 rounded-md border border-[var(--border)] bg-[var(--bg-cream)] px-2 py-1.5 text-xs font-semibold tabular-nums text-[var(--text-ink)] outline-none focus:border-[var(--brand-cyan)]"
+                className="presentation-jump-input min-w-0 flex-1 rounded-md border border-[var(--border)] bg-[var(--bg-cream)] px-2 py-1.5 text-xs font-semibold tabular-nums text-[var(--text-ink)] outline-none focus:border-[var(--brand-cyan)]"
               />
               <ChromeButton type="submit">{strings.goToSlide}</ChromeButton>
             </form>
