@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useId, useMemo } from "react";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -74,7 +74,9 @@ export function MonitoringChart({
 }) {
   const { strings, locale } = useApp();
   const reduce = usePrefersReducedMotion();
+  const instant = reduce || revealStep >= 99;
   const visible = revealStep > 0 || revealStep >= 99;
+  const fillId = useId().replace(/:/g, "");
 
   const data = useMemo(
     () =>
@@ -100,7 +102,7 @@ export function MonitoringChart({
                 margin={{ top: 12, right: 16, left: 0, bottom: 4 }}
               >
                 <defs>
-                  <linearGradient id="monFill" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor={CYAN} stopOpacity={0.35} />
                     <stop offset="100%" stopColor={CYAN} stopOpacity={0.02} />
                   </linearGradient>
@@ -130,8 +132,8 @@ export function MonitoringChart({
                   name={strings.chartNote}
                   stroke={CYAN}
                   strokeWidth={3}
-                  fill="url(#monFill)"
-                  isAnimationActive={!reduce}
+                  fill={`url(#${fillId})`}
+                  isAnimationActive={!instant}
                   animationDuration={1100}
                   dot={(props) => {
                     const { cx, cy, payload, index } = props as {
@@ -190,6 +192,7 @@ export function RiskMatrixVisual({
 }) {
   const { strings, locale } = useApp();
   const reduce = usePrefersReducedMotion();
+  const instant = reduce || revealStep >= 99;
   const visible = revealStep > 0 || revealStep >= 99;
 
   const colLabels = [strings.lowProb, strings.medProb, strings.highProb];
@@ -285,7 +288,7 @@ export function RiskMatrixVisual({
                 />
                 <Scatter
                   data={scatterData}
-                  isAnimationActive={!reduce}
+                  isAnimationActive={!instant}
                   shape={(props: {
                     cx?: number;
                     cy?: number;
@@ -353,6 +356,7 @@ export function KpiDashboard({
 }) {
   const { strings, locale } = useApp();
   const reduce = usePrefersReducedMotion();
+  const instant = reduce || revealStep >= 99;
   const visible = revealStep > 0 || revealStep >= 99;
 
   const barData = useMemo(() => {
@@ -444,7 +448,7 @@ export function KpiDashboard({
                       name={strings.indicator}
                       fill={CYAN}
                       radius={[8, 8, 0, 0]}
-                      isAnimationActive={!reduce}
+                      isAnimationActive={!instant}
                       animationDuration={900}
                     >
                       {barData.map((entry, i) => (

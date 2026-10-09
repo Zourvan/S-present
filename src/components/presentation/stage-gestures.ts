@@ -56,6 +56,7 @@ export function stageGestureAction(input: StageGestureInput): StageGestureAction
       !input.blockHorizontal &&
       (absX >= SWIPE_DISTANCE || (flicked && absX >= FLICK_DISTANCE))
     ) {
+      if (input.fromScreenEdge && input.dx > 0) return "none";
       return input.dx < 0 ? "advance" : "retreat";
     }
     if (
@@ -121,14 +122,9 @@ export function findScroller(
   return null;
 }
 
-export function startsAtScreenEdge(x: number, y: number): boolean {
-  const side = 28;
-  return (
-    x < side ||
-    x > window.innerWidth - side ||
-    y < 12 ||
-    y > window.innerHeight - 12
-  );
+/** Only the left inset used by mobile back-swipe. Other edges stay available. */
+export function startsAtScreenEdge(x: number, _y: number): boolean {
+  return x < 18;
 }
 
 type GestureState = {
@@ -211,7 +207,12 @@ export function bindStageGestures(
     }
     current.lastX = event.clientX;
     current.lastY = event.clientY;
-    if (current.pointerType !== "mouse" && event.cancelable) {
+    const allowSystemBack = current.fromScreenEdge && dx > 8;
+    if (
+      current.pointerType !== "mouse" &&
+      !allowSystemBack &&
+      event.cancelable
+    ) {
       event.preventDefault();
     }
   };
@@ -226,8 +227,12 @@ export function bindStageGestures(
     gesture = null;
     if (!commit || current.interactive || pointers.size > 0) return;
 
-    const dx = event.clientX - current.x;
-    const dy = event.clientY - current.y;
+    const point =
+      event.clientX === 0 && event.clientY === 0
+        ? { x: current.lastX, y: current.lastY }
+        : { x: event.clientX, y: event.clientY };
+    const dx = point.x - current.x;
+    const dy = point.y - current.y;
     const moved = Math.hypot(dx, dy) > TAP_SLOP;
     if (current.scrolled || current.noNav) {
       if (moved) {
@@ -246,7 +251,7 @@ export function bindStageGestures(
       dy,
       elapsedMs: event.timeStamp - current.t,
       width: rect.width,
-      offsetX: event.clientX - rect.left,
+      offsetX: point.x - rect.left,
       fromScreenEdge: current.fromScreenEdge,
       blockHorizontal: Boolean(current.scrollerX),
       blockVertical: Boolean(current.scrollerY),
@@ -262,7 +267,7 @@ export function bindStageGestures(
   };
 
   const onPointerUp = (event: PointerEvent) => finish(event, true);
-  const onPointerCancel = (event: PointerEvent) => finish(event, false);
+  const onPointerCancel = (event: PointerEvent) => finish(event, true);
 
   const onClickCapture = (event: MouseEvent) => {
     if (!suppressClick) return;
@@ -272,7 +277,10 @@ export function bindStageGestures(
   };
 
   const onTouchMove = (event: TouchEvent) => {
-    if (gesture?.interactive) return;
+    const current = gesture;
+    if (!current || current.interactive) return;
+    const touch = event.touches[0];
+    if (current.fromScreenEdge && touch && touch.clientX - current.x > 8) return;
     if (event.cancelable) event.preventDefault();
   };
 

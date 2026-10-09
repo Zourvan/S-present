@@ -64,7 +64,10 @@ export function AnimatedPath({
   visible?: boolean;
 }) {
   const reduce = usePrefersReducedMotion();
-  if (reduce || !visible) {
+  const exporting =
+    typeof document !== "undefined" &&
+    document.documentElement.dataset.slideExport === "1";
+  if (reduce || exporting || !visible) {
     return (
       <path
         d={d}

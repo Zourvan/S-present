@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type MutableRefObject } from "react";
+import { flushSync } from "react-dom";
 import type { Slide } from "@/lib/types";
 import { SlideRenderer } from "./SlideRenderer";
 
@@ -26,6 +27,35 @@ function delay(ms: number) {
   });
 }
 
+function edgesReady(root: HTMLElement) {
+  if (!root.querySelector(".react-flow")) return true;
+  const paths = [...root.querySelectorAll<SVGPathElement>(".react-flow__edge-path")];
+  if (paths.length === 0) return false;
+  return paths.every((path) => {
+    const nums = (path.getAttribute("d") || "").match(/-?\d+(?:\.\d+)?/g)?.map(Number) ?? [];
+    if (nums.length < 4) return false;
+    const dx = Math.abs(nums[0] - nums[nums.length - 2]);
+    const dy = Math.abs(nums[1] - nums[nums.length - 1]);
+    return dx > 40 || dy > 40;
+  });
+}
+
+function flowNodesFit(root: HTMLElement) {
+  const pane = root.querySelector(".react-flow");
+  if (!pane) return true;
+  const nodes = pane.querySelectorAll<HTMLElement>(".react-flow__node");
+  if (nodes.length === 0) return false;
+  const box = pane.getBoundingClientRect();
+  if (box.width < 10 || box.height < 10) return false;
+  for (const el of nodes) {
+    const r = el.getBoundingClientRect();
+    if (r.width < 2) return false;
+    if (r.left < box.left - 8 || r.right > box.right + 8) return false;
+    if (r.top < box.top - 8 || r.bottom > box.bottom + 8) return false;
+  }
+  return true;
+}
+
 export function SlideCapture({
   api,
 }: {
@@ -37,37 +67,40 @@ export function SlideCapture({
   useEffect(() => {
     api.current = {
       async capture(slides, onProgress) {
-        const { default: html2canvas } = await import("html2canvas");
+        const { toJpeg } = await import("html-to-image");
         if (document.fonts?.ready) await document.fonts.ready;
+        document.documentElement.dataset.slideExport = "1";
         const images: string[] = [];
         try {
           for (let i = 0; i < slides.length; i++) {
-            setSlide(slides[i]);
+            flushSync(() => setSlide(slides[i]));
             await nextFrame();
             await nextFrame();
-            await delay(420);
             const node = hostRef.current;
             if (!node) throw new Error("Capture host missing");
-            const canvas = await html2canvas(node, {
-              scale: 2,
-              useCORS: true,
-              backgroundColor: "#fff9f2",
-              logging: false,
+            const layoutDeadline = performance.now() + 2000;
+            while (
+              (!flowNodesFit(node) || !edgesReady(node)) &&
+              performance.now() < layoutDeadline
+            ) {
+              await delay(40);
+            }
+            await delay(60);
+            const dataUrl = await toJpeg(node, {
+              quality: 0.86,
+              pixelRatio: 2,
               width: CAPTURE_W,
               height: CAPTURE_H,
-              windowWidth: CAPTURE_W,
-              windowHeight: CAPTURE_H,
-              onclone: (doc) => {
-                doc.querySelectorAll<HTMLElement>(".slide-stage").forEach((el) => {
-                  el.style.zoom = "1";
-                });
-              },
+              backgroundColor: "#fff9f2",
+              cacheBust: true,
+              style: { zoom: "1" },
             });
-            images.push(canvas.toDataURL("image/jpeg", 0.86));
+            images.push(dataUrl);
             onProgress?.(i + 1, slides.length);
           }
           return images;
         } finally {
+          delete document.documentElement.dataset.slideExport;
           setSlide(null);
         }
       },
