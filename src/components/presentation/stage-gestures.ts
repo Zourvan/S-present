@@ -121,7 +121,7 @@ export function findScroller(
 }
 
 /** Only the left inset used by mobile back-swipe. Other edges stay available. */
-export function startsAtScreenEdge(x: number, _y: number): boolean {
+export function startsAtScreenEdge(x: number): boolean {
   return x < 18;
 }
 
@@ -173,7 +173,7 @@ export function bindStageGestures(
       t: event.timeStamp,
       interactive,
       noNav: isNoNavTarget(event.target, el),
-      fromScreenEdge: startsAtScreenEdge(event.clientX, event.clientY),
+      fromScreenEdge: startsAtScreenEdge(event.clientX),
       scrollerX: findScroller(event.target, el, "x"),
       scrollerY: findScroller(event.target, el, "y"),
       axis: null,

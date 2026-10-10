@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import type { Locale, Slide } from "@/lib/types";
 import { TOTAL_SLIDES } from "@/lib/slides";
 import { formatSystemDate } from "@/lib/system-date";
@@ -33,11 +33,11 @@ const CITATION_PREVIEW = 2;
 const LIBRARY_PREVIEW = 6;
 
 function useSystemDate(locale: Locale): string {
-  const [label, setLabel] = useState("");
-  useEffect(() => {
-    setLabel(formatSystemDate(new Date(), locale));
-  }, [locale]);
-  return label;
+  return useSyncExternalStore(
+    () => () => {},
+    () => formatSystemDate(new Date(), locale),
+    () => "",
+  );
 }
 
 function BulletList({

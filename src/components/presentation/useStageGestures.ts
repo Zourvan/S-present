@@ -10,8 +10,11 @@ export function useStageGestures(
   const advanceRef = useRef(onAdvance);
   const retreatRef = useRef(onRetreat);
   const cleanupRef = useRef<(() => void) | null>(null);
-  advanceRef.current = onAdvance;
-  retreatRef.current = onRetreat;
+
+  useEffect(() => {
+    advanceRef.current = onAdvance;
+    retreatRef.current = onRetreat;
+  }, [onAdvance, onRetreat]);
 
   const setNode = useCallback((node: HTMLElement | null) => {
     cleanupRef.current?.();

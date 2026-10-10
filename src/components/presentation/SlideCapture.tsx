@@ -57,15 +57,15 @@ function flowNodesFit(root: HTMLElement) {
 }
 
 export function SlideCapture({
-  api,
+  apiRef,
 }: {
-  api: MutableRefObject<SlideCaptureApi | null>;
+  apiRef: MutableRefObject<SlideCaptureApi | null>;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [slide, setSlide] = useState<Slide | null>(null);
 
   useEffect(() => {
-    api.current = {
+    apiRef.current = {
       async capture(slides, onProgress) {
         const { toJpeg } = await import("html-to-image");
         if (document.fonts?.ready) await document.fonts.ready;
@@ -106,9 +106,9 @@ export function SlideCapture({
       },
     };
     return () => {
-      api.current = null;
+      apiRef.current = null;
     };
-  }, [api]);
+  }, [apiRef]);
 
   return (
     <div

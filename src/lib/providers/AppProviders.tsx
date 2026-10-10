@@ -6,7 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import type { Locale, ThemeMode } from "../types";
@@ -38,30 +38,83 @@ function clampScale(n: number) {
   return Math.min(TYPE_SCALE_MAX, Math.max(TYPE_SCALE_MIN, n));
 }
 
+type AppPrefs = {
+  locale: Locale;
+  theme: ThemeMode;
+  typeScale: number;
+  textBold: boolean;
+  ready: boolean;
+};
+
+const defaultPrefs: AppPrefs = {
+  locale: "en",
+  theme: "light",
+  typeScale: TYPE_SCALE_DEFAULT,
+  textBold: false,
+  ready: false,
+};
+
+let prefs: AppPrefs = defaultPrefs;
+const prefsListeners = new Set<() => void>();
+
+function subscribePrefs(listener: () => void) {
+  prefsListeners.add(listener);
+  return () => {
+    prefsListeners.delete(listener);
+  };
+}
+
+function getPrefsSnapshot() {
+  return prefs;
+}
+
+function getPrefsServerSnapshot() {
+  return defaultPrefs;
+}
+
+function replacePrefs(next: AppPrefs) {
+  prefs = next;
+  for (const listener of prefsListeners) listener();
+}
+
+function patchPrefs(partial: Partial<AppPrefs>) {
+  prefs = { ...prefs, ...partial };
+  for (const listener of prefsListeners) listener();
+}
+
+function readStoredPrefs(): AppPrefs {
+  const savedLocale = window.localStorage.getItem("gmp-locale");
+  const savedTheme = window.localStorage.getItem("gmp-theme");
+  const savedScale = window.localStorage.getItem("gmp-type-scale");
+  const savedBold = window.localStorage.getItem("gmp-text-bold");
+  let locale: Locale = "en";
+  let theme: ThemeMode = "light";
+  let typeScale = TYPE_SCALE_DEFAULT;
+  let textBold = false;
+  if (savedLocale === "en" || savedLocale === "fa") locale = savedLocale;
+  if (savedTheme === "light" || savedTheme === "dark") theme = savedTheme;
+  if (savedScale != null) {
+    const n = Number.parseInt(savedScale, 10);
+    if (Number.isFinite(n)) typeScale = clampScale(n);
+  }
+  if (savedBold === "1" || savedBold === "true") textBold = true;
+  return { locale, theme, typeScale, textBold, ready: true };
+}
+
 export function AppProviders({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("en");
-  const [theme, setThemeState] = useState<ThemeMode>("light");
-  const [typeScale, setTypeScale] = useState(TYPE_SCALE_DEFAULT);
-  const [textBold, setTextBold] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
+  const { locale, theme, typeScale, textBold, ready } = useSyncExternalStore(
+    subscribePrefs,
+    getPrefsSnapshot,
+    getPrefsServerSnapshot,
+  );
 
   useEffect(() => {
-    const savedLocale = window.localStorage.getItem("gmp-locale") as Locale | null;
-    const savedTheme = window.localStorage.getItem("gmp-theme") as ThemeMode | null;
-    const savedScale = window.localStorage.getItem("gmp-type-scale");
-    const savedBold = window.localStorage.getItem("gmp-text-bold");
-    if (savedLocale === "en" || savedLocale === "fa") setLocaleState(savedLocale);
-    if (savedTheme === "light" || savedTheme === "dark") setThemeState(savedTheme);
-    if (savedScale != null) {
-      const n = Number.parseInt(savedScale, 10);
-      if (Number.isFinite(n)) setTypeScale(clampScale(n));
-    }
-    if (savedBold === "1" || savedBold === "true") setTextBold(true);
-    setHydrated(true);
+    if (prefs.ready) return;
+    replacePrefs(readStoredPrefs());
   }, []);
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (!ready) return;
     const root = document.documentElement;
     root.dataset.theme = theme;
     root.lang = locale;
@@ -77,23 +130,25 @@ export function AppProviders({ children }: { children: ReactNode }) {
     window.localStorage.setItem("gmp-theme", theme);
     window.localStorage.setItem("gmp-type-scale", String(typeScale));
     window.localStorage.setItem("gmp-text-bold", textBold ? "1" : "0");
-  }, [locale, theme, typeScale, textBold, hydrated]);
+  }, [locale, theme, typeScale, textBold, ready]);
 
-  const setLocale = useCallback((next: Locale) => setLocaleState(next), []);
-  const setTheme = useCallback((next: ThemeMode) => setThemeState(next), []);
+  const setLocale = useCallback((next: Locale) => patchPrefs({ locale: next }), []);
+  const setTheme = useCallback((next: ThemeMode) => patchPrefs({ theme: next }), []);
   const toggleLocale = useCallback(
-    () => setLocaleState((prev) => (prev === "en" ? "fa" : "en")),
+    () =>
+      patchPrefs({ locale: prefs.locale === "en" ? "fa" : "en" }),
     [],
   );
   const toggleTheme = useCallback(
-    () => setThemeState((prev) => (prev === "light" ? "dark" : "light")),
+    () =>
+      patchPrefs({ theme: prefs.theme === "light" ? "dark" : "light" }),
     [],
   );
   const bumpTypeScale = useCallback((delta: -1 | 1) => {
-    setTypeScale((prev) => clampScale(prev + delta));
+    patchPrefs({ typeScale: clampScale(prefs.typeScale + delta) });
   }, []);
   const toggleTextBold = useCallback(() => {
-    setTextBold((prev) => !prev);
+    patchPrefs({ textBold: !prefs.textBold });
   }, []);
 
   const value = useMemo(

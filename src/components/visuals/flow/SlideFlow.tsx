@@ -554,11 +554,9 @@ export function SlideFlow({
   const { locale } = useApp();
   const hostRef = useRef<HTMLDivElement>(null);
   const [hostW, setHostW] = useState(0);
-  const [animate, setAnimate] = useState(true);
-
-  useEffect(() => {
-    setAnimate(document.documentElement.dataset.slideExport !== "1");
-  }, []);
+  const animate =
+    typeof document === "undefined" ||
+    document.documentElement.dataset.slideExport !== "1";
 
   useEffect(() => {
     const el = hostRef.current;

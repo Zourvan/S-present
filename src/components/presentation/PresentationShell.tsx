@@ -54,7 +54,8 @@ export function PresentationShell() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [chromeHidden, setChromeHidden] = useState(false);
   const [direction, setDirection] = useState(1);
-  const [jumpValue, setJumpValue] = useState("1");
+  const [jumpValue, setJumpValue] = useState(() => toLocaleDigits(1, "en"));
+  const [jumpSource, setJumpSource] = useState({ index: 0, locale });
   const wheelLock = useRef(false);
   const presenting = isFullscreen || chromeHidden;
 
@@ -70,9 +71,10 @@ export function PresentationShell() {
     return resolveSlide(source, locale).visualData?.presenter?.name ?? "";
   }, [locale]);
 
-  useEffect(() => {
+  if (jumpSource.index !== index || jumpSource.locale !== locale) {
+    setJumpSource({ index, locale });
     setJumpValue(toLocaleDigits(index + 1, locale));
-  }, [index, locale]);
+  }
 
   const goTo = useCallback(
     (nextIndex: number) => {
@@ -697,7 +699,7 @@ export function PresentationShell() {
           </nav>
         </div>
       ) : null}
-      <SlideCapture api={captureRef} />
+      <SlideCapture apiRef={captureRef} />
     </div>
   );
 }
