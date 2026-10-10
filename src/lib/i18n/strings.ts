@@ -102,6 +102,10 @@ export const UI_STRINGS = {
     possibleContributors: "Possible contributors, by event",
     evidenceMap: "Evidence map",
     deviation: "Deviation",
+    immediateResponseTree: "Immediate-response decision tree",
+    eventDetected: "Event detected",
+    immediateRiskQuestion: "Immediate risk to people, process, or product?",
+    allBranchesDocumented: "All branches lead to a documented assessment",
   },
   fa: {
     appTitle: "پرزنتیشن GMP",
@@ -131,7 +135,7 @@ export const UI_STRINGS = {
     questions: "پرسش و پاسخ",
     thanks: "سپاسگزاریم",
     oral: "داروی خوراکی متعارف",
-    biotech: "فراورده زیست‌فناوری",
+    biotech: "فرآورده زیست‌فناوری",
     shared: "کنترل‌های مشترک GMP",
     sharedPqs: "PQS مشترک",
     keyMessage: "پیام کلیدی",
@@ -203,6 +207,10 @@ export const UI_STRINGS = {
     possibleContributors: "عوامل محتمل، بر اساس رویداد",
     evidenceMap: "نقشه شواهد",
     deviation: "انحراف",
+    immediateResponseTree: "درخت تصمیم پاسخ فوری",
+    eventDetected: "رویداد شناسایی شد",
+    immediateRiskQuestion: "ریسک فوری برای افراد، فرآیند یا محصول؟",
+    allBranchesDocumented: "همه شاخه‌ها به ارزیابی مستند ختم می‌شوند",
   },
 } as const;
 

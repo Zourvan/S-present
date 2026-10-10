@@ -50,12 +50,12 @@ function BulletList({
   startIndex?: number;
 }) {
   return (
-    <ul className="space-y-2.5">
+    <ul className="min-h-0 space-y-1.5 overflow-y-auto pe-1 sm:space-y-2">
       {items.map((item, i) => (
         <RevealItem key={item} index={startIndex + i} revealStep={revealStep}>
-          <li className="flex gap-2.5 text-[1.1em] font-medium leading-relaxed">
-            <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--brand-cyan)]" />
-            <span>{item}</span>
+          <li className="flex gap-2 text-[1em] font-medium leading-snug sm:gap-2.5 sm:text-[1.05em]">
+            <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--brand-cyan)]" />
+            <span className="min-w-0">{item}</span>
           </li>
         </RevealItem>
       ))}
@@ -489,20 +489,24 @@ function VisualBlock({
 
     case "monitoringChart":
       return (
-        <div className="flex h-full flex-col justify-center gap-3">
-          <MonitoringChart
-            labels={vd.chart?.labels ?? ["W1", "W2", "W3", "W4", "W5", "W6"]}
-            series={vd.chart?.series ?? [12, 14, 11, 22, 13, 12]}
-            excursionIndexes={vd.chart?.excursionIndexes ?? [3]}
-            note={vd.chart?.note}
-            revealStep={revealStep}
-          />
-          {slide.content.length > 0 ? (
-            <BulletList
-              items={slide.content}
+        <div className="flex h-full min-h-0 flex-col justify-center gap-2 sm:gap-3">
+          <div className="shrink-0">
+            <MonitoringChart
+              labels={vd.chart?.labels ?? ["W1", "W2", "W3", "W4", "W5", "W6"]}
+              series={vd.chart?.series ?? [12, 14, 11, 22, 13, 12]}
+              excursionIndexes={vd.chart?.excursionIndexes ?? [3]}
+              note={vd.chart?.note}
               revealStep={revealStep}
-              startIndex={1}
             />
+          </div>
+          {slide.content.length > 0 ? (
+            <div className="min-h-0 flex-1">
+              <BulletList
+                items={slide.content}
+                revealStep={revealStep}
+                startIndex={1}
+              />
+            </div>
           ) : null}
         </div>
       );
@@ -633,7 +637,7 @@ export function SlideRenderer({
       ) : null}
 
       <div
-        className={`min-h-0 flex-1 overflow-hidden ${
+        className={`min-h-0 flex-1 overflow-x-hidden overflow-y-auto ${
           fillBody ? "flex flex-col" : ""
         }`}
       >

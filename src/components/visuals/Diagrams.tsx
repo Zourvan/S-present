@@ -26,13 +26,13 @@ export function HierarchyLayers({
 }) {
   const { locale } = useApp();
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col items-stretch gap-2">
+    <div className="mx-auto flex h-full w-full max-w-4xl flex-col items-stretch justify-center gap-2.5">
       {layers.map((layer, i) => {
-        const widthPct = Math.max(72, 100 - i * 5);
+        const widthPct = Math.max(78, 100 - i * 4);
         return (
           <RevealItem key={layer} index={i} revealStep={revealStep}>
             <div
-              className="mx-auto rounded-lg border border-[var(--border)] px-4 py-3 text-sm font-semibold md:text-base"
+              className="mx-auto rounded-lg border border-[var(--border)] px-4 py-3 text-[0.95em] font-semibold leading-snug md:px-5 md:py-3.5 md:text-[1.05em]"
               style={{
                 width: `${widthPct}%`,
                 background:

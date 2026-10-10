@@ -94,12 +94,12 @@ export function MonitoringChart({
         <p className="mb-2 text-sm font-bold uppercase tracking-wide text-[var(--text-ink)]">
           {strings.chartNote}
         </p>
-        <div className="h-44 w-full sm:h-48" dir="ltr">
+        <div className="h-48 w-full sm:h-56" dir="ltr">
           {visible ? (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={data}
-                margin={{ top: 12, right: 16, left: 0, bottom: 4 }}
+                margin={{ top: 12, right: 16, left: 4, bottom: 8 }}
               >
                 <defs>
                   <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
@@ -114,15 +114,15 @@ export function MonitoringChart({
                 />
                 <XAxis
                   dataKey="name"
-                  tick={{ fill: INK, fontSize: 12, fontWeight: 600 }}
+                  tick={{ fill: INK, fontSize: 14, fontWeight: 700 }}
                   tickLine={false}
                   axisLine={{ stroke: BORDER }}
                 />
                 <YAxis
-                  tick={{ fill: MUTED, fontSize: 11, fontWeight: 600 }}
+                  tick={{ fill: MUTED, fontSize: 13, fontWeight: 700 }}
                   tickLine={false}
                   axisLine={false}
-                  width={36}
+                  width={42}
                   tickFormatter={(v) => toLocaleDigits(v, locale)}
                 />
                 <Tooltip content={<ChartTooltipShell />} />

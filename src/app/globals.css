@@ -289,9 +289,13 @@ html[lang="fa"] .slide-stage {
   overflow: visible !important;
 }
 
+.slide-flow-canvas .react-flow__edges {
+  z-index: 3 !important;
+}
+
 .slide-flow-canvas .slide-flow-edge-motion {
-  stroke-dasharray: 10 12;
-  animation: slide-flow-dash 0.75s linear infinite;
+  stroke-dasharray: 14 10;
+  animation: slide-flow-dash 0.85s linear infinite;
 }
 
 .slide-flow-canvas .slide-flow-handle {

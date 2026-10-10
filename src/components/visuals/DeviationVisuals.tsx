@@ -29,7 +29,7 @@ function toneVars(tone: ToneName = "violet") {
 
 function Callout({ text }: { text: string }) {
   return (
-    <p className="rounded-md border-l-4 border-[var(--tone-violet)] bg-[var(--tone-violet-bg)] px-2.5 py-1.5 text-[12px] font-semibold leading-snug text-[var(--text-ink)]">
+    <p className="rounded-md border-l-4 border-[var(--tone-violet)] bg-[var(--tone-violet-bg)] px-2.5 py-1.5 text-[0.8em] font-semibold leading-snug text-[var(--text-ink)] sm:text-[0.85em]">
       {text}
     </p>
   );
@@ -45,30 +45,30 @@ function BlockCard({
   chips?: boolean;
 }) {
   return (
-    <section className="min-w-0 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2">
-      <h3 className="mb-1 text-[12px] font-bold uppercase tracking-wide text-[var(--brand-cyan-dark)]">
+    <section className="flex h-full min-h-0 min-w-0 flex-col rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2.5 sm:p-3">
+      <h3 className="mb-1.5 shrink-0 text-[0.8em] font-bold uppercase tracking-wide text-[var(--brand-cyan-dark)] sm:text-[0.85em]">
         {heading}
       </h3>
       {chips ? (
-        <ul className="flex flex-wrap gap-1">
+        <ul className="flex min-h-0 flex-1 flex-wrap content-start gap-1.5 overflow-y-auto">
           {points.map((point) => (
             <li
               key={point}
-              className="rounded-full border border-[var(--border)] bg-[var(--bg-cream)] px-2 py-0.5 text-[11px] font-semibold leading-snug text-[var(--text-ink)]"
+              className="rounded-full border border-[var(--border)] bg-[var(--bg-cream)] px-2 py-1 text-[0.75em] font-semibold leading-snug text-[var(--text-ink)] sm:text-[0.8em]"
             >
               {point}
             </li>
           ))}
         </ul>
       ) : (
-        <ul className="space-y-1">
+        <ul className="min-h-0 flex-1 space-y-1.5 overflow-y-auto">
           {points.map((point) => (
             <li
               key={point}
-              className="flex gap-1.5 text-[12px] font-medium leading-snug text-[var(--text-ink)]"
+              className="flex gap-1.5 text-[0.8em] font-medium leading-snug text-[var(--text-ink)] sm:text-[0.85em]"
             >
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand-cyan)]" />
-              <span>{point}</span>
+              <span className="min-w-0">{point}</span>
             </li>
           ))}
         </ul>
@@ -123,10 +123,15 @@ function LifecycleSlide({
     ["violet", strings.qualitySystemControls],
   ] as const;
   return (
-    <div className="flex h-full min-h-0 flex-col gap-1.5">
-      <div className="grid min-h-0 grid-cols-3 gap-1.5">
+    <div className="flex h-full min-h-0 flex-col gap-2">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 sm:grid-cols-3">
         {blocks.map((block, index) => (
-          <RevealItem key={block.heading} index={index} revealStep={revealStep}>
+          <RevealItem
+            key={block.heading}
+            index={index}
+            revealStep={revealStep}
+            className="min-h-0"
+          >
             <BlockCard
               heading={block.heading}
               points={block.points}
@@ -221,23 +226,24 @@ function ContainmentSlide({
   data: VisualData;
   revealStep: number;
 }) {
+  const { strings } = useApp();
   return (
-    <div className="grid h-full min-h-0 grid-cols-[1.05fr_1fr] gap-2">
+    <div className="grid h-full min-h-0 grid-cols-1 gap-2 lg:grid-cols-[1.05fr_1fr]">
       <RevealItem index={0} revealStep={revealStep} className="min-h-0">
-        <div className="grid h-full grid-cols-2 gap-1.5">
+        <div className="grid h-full min-h-0 grid-cols-2 gap-2">
           {(data.blocks ?? []).map((block, index) => (
             <section
               key={block.heading}
-              className="min-w-0 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2"
+              className="flex min-h-0 min-w-0 flex-col rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2.5 sm:p-3"
             >
-              <h3 className="text-[12px] font-bold text-[var(--brand-cyan-dark)]">
+              <h3 className="shrink-0 text-[0.85em] font-bold text-[var(--brand-cyan-dark)] sm:text-[0.9em]">
                 {index + 1}. {block.heading}
               </h3>
-              <ul className="mt-1 space-y-0.5">
+              <ul className="mt-1.5 min-h-0 flex-1 space-y-1.5 overflow-y-auto">
                 {block.points.map((point) => (
                   <li
                     key={point}
-                    className="text-[11px] font-medium leading-snug text-[var(--text-ink)]"
+                    className="text-[0.8em] font-medium leading-snug text-[var(--text-ink)] sm:text-[0.85em]"
                   >
                     {point}
                   </li>
@@ -249,44 +255,47 @@ function ContainmentSlide({
       </RevealItem>
       <RevealItem index={1} revealStep={revealStep} className="min-h-0">
         <figure
-          className="flex h-full flex-col gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2"
-          aria-label="Decision tree. After an event is detected, immediate risk is judged as yes, uncertain, or no apparent immediate impact. Every branch ends in a documented assessment."
+          className="flex h-full min-h-0 flex-col gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2.5 sm:p-3"
+          aria-label={strings.immediateResponseTree}
         >
-          <figcaption className="text-[11px] font-bold uppercase tracking-wide text-[var(--brand-cyan-dark)]">
-            Immediate-response decision tree
+          <figcaption className="shrink-0 text-[0.8em] font-bold uppercase tracking-wide text-[var(--brand-cyan-dark)] sm:text-[0.85em]">
+            {strings.immediateResponseTree}
           </figcaption>
           <div
-            className="rounded-md border-2 px-2 py-1 text-center text-[12px] font-bold text-[var(--text-ink)]"
+            className="shrink-0 rounded-md border-2 px-2 py-1.5 text-center text-[0.85em] font-bold text-[var(--text-ink)] sm:text-[0.9em]"
             style={{
               borderColor: toneVars("amber").border,
               background: toneVars("amber").background,
             }}
           >
-            Event detected
+            {strings.eventDetected}
           </div>
-          <p className="text-center text-[12px] font-bold text-[var(--text-ink)]">
-            Immediate risk to people, process, or product?
+          <p className="shrink-0 text-center text-[0.85em] font-bold leading-snug text-[var(--text-ink)] sm:text-[0.9em]">
+            {strings.immediateRiskQuestion}
           </p>
-          <div className="grid min-h-0 flex-1 grid-cols-3 gap-1">
+          <div className="grid min-h-0 flex-1 grid-cols-1 gap-1.5 sm:grid-cols-3">
             {(data.branches ?? []).map((branch) => {
               const colors = toneVars(branch.tone);
               return (
                 <div
                   key={branch.label}
-                  className="flex flex-col rounded-md border-2 p-1.5"
+                  className="flex min-h-0 flex-col rounded-md border-2 p-2"
                   style={{
                     borderColor: colors.border,
                     background: colors.background,
                   }}
                 >
-                  <p className="text-[11px] font-bold leading-tight" style={{ color: colors.ink }}>
+                  <p
+                    className="shrink-0 text-[0.8em] font-bold leading-tight sm:text-[0.85em]"
+                    style={{ color: colors.ink }}
+                  >
                     {branch.label}
                   </p>
-                  <ol className="mt-1 space-y-0.5">
+                  <ol className="mt-1.5 min-h-0 flex-1 space-y-1 overflow-y-auto">
                     {branch.steps.map((step, index) => (
                       <li
                         key={step}
-                        className="text-[11px] font-semibold leading-snug text-[var(--text-ink)]"
+                        className="text-[0.78em] font-semibold leading-snug text-[var(--text-ink)] sm:text-[0.82em]"
                       >
                         {index + 1}. {step}
                       </li>
@@ -297,13 +306,13 @@ function ContainmentSlide({
             })}
           </div>
           <p
-            className="rounded-md border-2 px-2 py-1 text-center text-[11px] font-bold text-[var(--text-ink)]"
+            className="shrink-0 rounded-md border-2 px-2 py-1.5 text-center text-[0.8em] font-bold text-[var(--text-ink)] sm:text-[0.85em]"
             style={{
               borderColor: toneVars("violet").border,
               background: toneVars("violet").background,
             }}
           >
-            All branches lead to a documented assessment
+            {strings.allBranchesDocumented}
           </p>
         </figure>
       </RevealItem>

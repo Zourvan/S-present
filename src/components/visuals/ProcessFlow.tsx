@@ -27,8 +27,8 @@ export function SplitPathways({
 }: {
   leftTitle?: string;
   rightTitle?: string;
-  leftSteps?: string[];
   rightSteps?: string[];
+  leftSteps?: string[];
   shared?: string[];
   revealStep: number;
   compact?: boolean;
@@ -36,16 +36,20 @@ export function SplitPathways({
   const { strings, locale } = useApp();
   return (
     <div
-      className={`grid grid-cols-[1fr_auto_1fr] ${compact ? "gap-2" : "gap-3"}`}
+      className={`grid min-w-0 items-stretch ${
+        compact
+          ? "grid-cols-[1fr_minmax(7.5rem,9.5rem)_1fr] gap-2"
+          : "grid-cols-[1fr_minmax(9.5rem,12.5rem)_1fr] gap-3"
+      }`}
     >
       <div
-        className={`rounded-lg border-2 border-[var(--oral-coral)]/50 bg-[var(--oral-coral)]/5 ${
-          compact ? "p-2.5" : "p-3"
+        className={`min-w-0 rounded-lg border-2 border-[var(--oral-coral)]/50 bg-[var(--oral-coral)]/5 ${
+          compact ? "p-2.5" : "p-3.5"
         }`}
       >
         <p
           className={`mb-1.5 font-bold uppercase tracking-wide text-[var(--oral-coral)] ${
-            compact ? "text-xs" : "text-sm"
+            compact ? "text-xs" : "text-sm md:text-base"
           }`}
         >
           {leftTitle ?? strings.oral}
@@ -54,47 +58,53 @@ export function SplitPathways({
           {leftSteps.map((step, i) => (
             <RevealItem key={step} index={i} revealStep={revealStep}>
               <li
-                className={`flex gap-2 font-medium ${
-                  compact ? "text-xs" : "text-sm"
+                className={`flex gap-2 font-semibold leading-snug ${
+                  compact ? "text-xs" : "text-sm md:text-[0.95em]"
                 }`}
               >
                 <span className="font-bold text-[var(--oral-coral)]">
                   {toLocaleDigits(i + 1, locale)}.
                 </span>
-                <span>{step}</span>
+                <span className="min-w-0">{step}</span>
               </li>
             </RevealItem>
           ))}
         </ol>
       </div>
-      <div className="flex flex-col items-center justify-center gap-1.5 px-1">
+
+      <div className="flex min-w-0 flex-col items-center justify-center gap-2 px-1">
         <div
-          className={`rounded-full border-2 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/10 text-center font-bold uppercase text-[var(--brand-cyan-dark)] ${
-            compact ? "px-2.5 py-1.5 text-[10px]" : "px-3 py-2 text-xs"
+          className={`w-full rounded-2xl border-2 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/15 text-center font-extrabold uppercase leading-tight text-[var(--brand-cyan-dark)] shadow-sm ${
+            compact
+              ? "px-2 py-2 text-[0.7rem]"
+              : "px-3 py-2.5 text-sm md:text-base"
           }`}
         >
           {strings.sharedPqs}
         </div>
         <ul
-          className={`max-w-[140px] space-y-0.5 text-center font-medium text-[var(--text-muted)] ${
-            compact ? "text-[10px]" : "text-xs"
+          className={`w-full space-y-1 text-center font-semibold leading-snug text-[var(--text-ink)] ${
+            compact ? "text-[0.65rem]" : "text-xs md:text-sm"
           }`}
         >
           {shared.slice(0, 6).map((s, i) => (
             <RevealItem key={s} index={i + 2} revealStep={revealStep}>
-              <li>{s}</li>
+              <li className="rounded-md bg-[var(--brand-cyan)]/8 px-1.5 py-1">
+                {s}
+              </li>
             </RevealItem>
           ))}
         </ul>
       </div>
+
       <div
-        className={`rounded-lg border-2 border-[var(--biotech-burgundy)]/50 bg-[var(--biotech-burgundy)]/5 ${
-          compact ? "p-2.5" : "p-3"
+        className={`min-w-0 rounded-lg border-2 border-[var(--biotech-burgundy)]/50 bg-[var(--biotech-burgundy)]/5 ${
+          compact ? "p-2.5" : "p-3.5"
         }`}
       >
         <p
           className={`mb-1.5 font-bold uppercase tracking-wide text-[var(--biotech-burgundy)] ${
-            compact ? "text-xs" : "text-sm"
+            compact ? "text-xs" : "text-sm md:text-base"
           }`}
         >
           {rightTitle ?? strings.biotech}
@@ -103,14 +113,14 @@ export function SplitPathways({
           {rightSteps.map((step, i) => (
             <RevealItem key={step} index={i} revealStep={revealStep}>
               <li
-                className={`flex gap-2 font-medium ${
-                  compact ? "text-xs" : "text-sm"
+                className={`flex gap-2 font-semibold leading-snug ${
+                  compact ? "text-xs" : "text-sm md:text-[0.95em]"
                 }`}
               >
                 <span className="font-bold text-[var(--biotech-burgundy)]">
                   {toLocaleDigits(i + 1, locale)}.
                 </span>
-                <span>{step}</span>
+                <span className="min-w-0">{step}</span>
               </li>
             </RevealItem>
           ))}

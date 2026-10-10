@@ -20,16 +20,17 @@ import { useApp } from "@/lib/providers/AppProviders";
 
 type Pathway = FlowNode["pathway"];
 
-const EDGE_STROKE = "#00adc8";
-const EDGE_STROKE_DIM = "rgba(0, 173, 200, 0.42)";
+const EDGE_STROKE = "#008a9e";
+const EDGE_STROKE_DIM = "rgba(0, 138, 158, 0.55)";
 /** Layout coordinate width — scaled to the host via CSS (not React Flow fitView). */
 const DESIGN_W = 1180;
 const GUTTER = 56;
-const GAP_X = 64;
-const GAP_Y = 54;
+const GAP_X = 72;
+const GAP_Y = 58;
 const TOP_PAD = 36;
 const BOTTOM_PAD = 24;
-const ARROW = 16;
+const ARROW = 22;
+const EDGE_WIDTH = 5.5;
 const TOP_LANE = 14;
 const LANE_DROP = 40;
 /** Keep graphs from eating the whole slide body when many rows. */
@@ -114,7 +115,7 @@ function SlideFlowNode({ data }: NodeProps) {
       <Handle id="bottom-source" type="source" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" style={{ left: "50%" }} />
       <Handle id="bottom-source-a" type="source" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" style={{ left: "32%" }} />
       <Handle id="bottom-source-b" type="source" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" style={{ left: "68%" }} />
-      <p className="max-w-full text-[0.92em] font-bold leading-snug break-words">
+      <p className="max-w-full text-[1em] font-bold leading-snug break-words md:text-[1.05em]">
         {d.label}
       </p>
     </div>
@@ -211,16 +212,26 @@ function EdgeStroke({
   animate: boolean;
 }) {
   return (
-    <path
-      d={d}
-      fill="none"
-      stroke={color}
-      strokeWidth={width}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={animate ? "slide-flow-edge-motion" : undefined}
-      vectorEffect="non-scaling-stroke"
-    />
+    <>
+      {/* Halo so horizontal hops stay visible after canvas scale */}
+      <path
+        d={d}
+        fill="none"
+        stroke="rgba(255, 249, 242, 0.92)"
+        strokeWidth={width + 5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d={d}
+        fill="none"
+        stroke={color}
+        strokeWidth={width}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={animate ? "slide-flow-edge-motion" : undefined}
+      />
+    </>
   );
 }
 
@@ -235,7 +246,7 @@ function FlowEdge({
 }: EdgeProps) {
   const edgeData = (data ?? {}) as FlowEdgeData;
   const color = edgeData.lit ? EDGE_STROKE : EDGE_STROKE_DIM;
-  const animate = Boolean(edgeData.animate && edgeData.lit);
+  const animate = Boolean(edgeData.animate);
 
   if (edgeData.feedback) {
     const laneY = edgeData.laneY ?? Math.max(sourceY, targetY) + LANE_DROP + 20;
@@ -257,11 +268,11 @@ function FlowEdge({
     const labelX = (sourceX + gutterX) / 2;
     return (
       <>
-        <EdgeStroke d={d} color={color} width={3.75} animate={animate} />
+        <EdgeStroke d={d} color={color} width={EDGE_WIDTH} animate={animate} />
         <ArrowHead x={tip.x} y={tip.y} dir={tip.dir} color={color} />
         <EdgeLabelRenderer>
           <div
-            className="nodrag nopan rounded-full border border-[#00adc8] bg-[var(--surface)] px-1.5 py-0.5 text-sm font-bold leading-none text-[#008a9e] shadow-sm"
+            className="nodrag nopan rounded-full border-2 border-[#008a9e] bg-[var(--surface)] px-2 py-0.5 text-base font-bold leading-none text-[#008a9e] shadow-sm"
             style={{
               position: "absolute",
               transform: `translate(-50%, -50%) translate(${labelX}px, ${laneY}px)`,
@@ -284,13 +295,13 @@ function FlowEdge({
     targetX: end.x,
     targetY: end.y,
     targetPosition,
-    borderRadius: 16,
-    offset: 22,
+    borderRadius: 18,
+    offset: 28,
   });
 
   return (
     <>
-      <EdgeStroke d={path} color={color} width={3.75} animate={animate} />
+      <EdgeStroke d={path} color={color} width={EDGE_WIDTH} animate={animate} />
       <ArrowHead x={tip.x} y={tip.y} dir={tip.dir} color={color} />
     </>
   );
