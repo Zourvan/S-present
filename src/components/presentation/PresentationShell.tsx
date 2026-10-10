@@ -19,6 +19,7 @@ import { SlideRenderer } from "./SlideRenderer";
 import { SlideStage } from "./SlideStage";
 import { exportPresentationPdf } from "@/lib/export/pdf";
 import { exportPresentationPptx } from "@/lib/export/pptx";
+import { exportPresentationMarkdown } from "@/lib/export/markdown";
 import { SlideCapture, type SlideCaptureApi } from "./SlideCapture";
 import { findScroller } from "./stage-gestures";
 import { useStageGestures } from "./useStageGestures";
@@ -48,7 +49,7 @@ export function PresentationShell() {
   const [notesOpen, setNotesOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
-  const [exporting, setExporting] = useState<"pdf" | "pptx" | null>(null);
+  const [exporting, setExporting] = useState<"pdf" | "pptx" | "md" | null>(null);
   const [exportCount, setExportCount] = useState<string | null>(null);
   const captureRef = useRef<SlideCaptureApi | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -243,20 +244,33 @@ export function PresentationShell() {
     }, 350);
   }
 
-  async function handleExport(kind: "pdf" | "pptx") {
-    if (!captureRef.current) return;
+  async function handleExport(kind: "pdf" | "pptx" | "md") {
     setExporting(kind);
     setExportCount(null);
     try {
       const exportSlides = resolveSlides(SLIDES, locale);
-      const images = await captureRef.current.capture(exportSlides, (done, total) => {
-        setExportCount(`${done}/${total}`);
-      });
+      if (kind === "md") {
+        await exportPresentationMarkdown(exportSlides, locale);
+        return;
+      }
+      if (!captureRef.current) return;
+      const images = await captureRef.current.capture(
+        exportSlides,
+        (done, total) => {
+          setExportCount(`${done}/${total}`);
+        },
+      );
       if (kind === "pdf") await exportPresentationPdf(images, locale);
       else await exportPresentationPptx(exportSlides, images, locale);
     } catch (err) {
       console.error(err);
-      alert(kind === "pdf" ? "PDF export failed." : "PPTX export failed.");
+      alert(
+        kind === "pdf"
+          ? "PDF export failed."
+          : kind === "pptx"
+            ? "PPTX export failed."
+            : "Markdown export failed.",
+      );
     } finally {
       setExporting(null);
       setExportCount(null);
@@ -387,6 +401,14 @@ export function PresentationShell() {
                 >
                   {strings.exportPptx}
                 </button>
+                <button
+                  type="button"
+                  className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                  disabled={Boolean(exporting)}
+                  onClick={() => void handleExport("md")}
+                >
+                  {strings.exportMarkdown}
+                </button>
               </div>
             ) : null}
           </div>
@@ -487,6 +509,14 @@ export function PresentationShell() {
                 {exporting === "pptx" && exportCount
                   ? `${strings.exporting} ${exportCount}`
                   : strings.exportPptx}
+              </button>
+              <button
+                type="button"
+                className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                disabled={Boolean(exporting)}
+                onClick={() => void handleExport("md")}
+              >
+                {exporting === "md" ? strings.exporting : strings.exportMarkdown}
               </button>
             </div>
           ) : null}

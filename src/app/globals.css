@@ -186,12 +186,22 @@ body {
 }
 
 .export-capture .slide-stage {
-  zoom: 1 !important;
   box-shadow: none;
   border-radius: 0;
 }
 
 .slide-stage {
+  /* Base em for type scale — text utilities resolve against this, layout stays fixed */
+  --slide-em: calc(var(--slide-fs) * var(--slide-type-scale, 1));
+  --text-xs: calc(0.75 * var(--slide-em));
+  --text-sm: calc(0.875 * var(--slide-em));
+  --text-base: var(--slide-em);
+  --text-lg: calc(1.125 * var(--slide-em));
+  --text-xl: calc(1.25 * var(--slide-em));
+  --text-2xl: calc(1.5 * var(--slide-em));
+  --text-3xl: calc(1.875 * var(--slide-em));
+  --text-4xl: calc(2.25 * var(--slide-em));
+  --text-5xl: calc(3 * var(--slide-em));
   width: var(--slide-w) !important;
   height: var(--slide-h) !important;
   min-width: var(--slide-w);
@@ -201,18 +211,10 @@ body {
   background: var(--bg-ivory);
   color: var(--text-ink);
   box-shadow: var(--slide-shadow);
-  font-size: var(--slide-fs);
-  /* Scales rem/Tailwind text inside the canvas (Chromium/Edge; Safari falls back to fs only) */
-  zoom: var(--slide-type-scale, 1);
+  font-size: var(--slide-em);
   line-height: 1.4;
   overflow: hidden;
   box-sizing: border-box;
-}
-
-@supports not (zoom: 1) {
-  .slide-stage {
-    font-size: calc(var(--slide-fs) * var(--slide-type-scale, 1));
-  }
 }
 
 /* Presenter control: thicker slide body text */

@@ -75,7 +75,7 @@ export function OverviewGrid({
             </div>
             <p className="text-sm font-bold md:text-base">{item.title}</p>
             {item.body ? (
-              <p className="mt-1 flex-1 text-sm font-medium text-[var(--text-muted)] md:text-[0.95rem]">
+              <p className="mt-1 flex-1 text-sm font-medium text-[var(--text-muted)] md:text-[0.95em]">
                 {item.body}
               </p>
             ) : null}
@@ -213,7 +213,7 @@ export function DecisionTree({
             <span className="absolute start-0 top-0 h-full w-1 rounded-s bg-[var(--brand-cyan)]" />
             <p className="text-sm font-bold md:text-base">{item.title}</p>
             {item.body ? (
-              <p className="mt-1 text-sm font-medium text-[var(--text-muted)] md:text-[0.95rem]">
+              <p className="mt-1 text-sm font-medium text-[var(--text-muted)] md:text-[0.95em]">
                 {item.body}
               </p>
             ) : null}

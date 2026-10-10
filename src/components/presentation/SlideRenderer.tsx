@@ -53,7 +53,7 @@ function BulletList({
     <ul className="space-y-2.5">
       {items.map((item, i) => (
         <RevealItem key={item} index={startIndex + i} revealStep={revealStep}>
-          <li className="flex gap-2.5 text-[1.1rem] font-medium leading-relaxed">
+          <li className="flex gap-2.5 text-[1.1em] font-medium leading-relaxed">
             <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--brand-cyan)]" />
             <span>{item}</span>
           </li>
@@ -226,10 +226,10 @@ function VisualBlock({
                 priority
                 className="mx-auto mb-2 drop-shadow-sm"
               />
-              <h1 className="text-[1.75rem] font-bold leading-tight tracking-tight text-[var(--text-ink)]">
+              <h1 className="text-[1.75em] font-bold leading-tight tracking-tight text-[var(--text-ink)]">
                 {slide.title}
               </h1>
-              <p className="mx-auto mt-1 max-w-3xl text-[0.95rem] font-medium leading-snug text-[var(--text-muted)]">
+              <p className="mx-auto mt-1 max-w-3xl text-[0.95em] font-medium leading-snug text-[var(--text-muted)]">
                 {vd.subtitle ?? slide.keyMessage}
               </p>
               <p className="mt-1.5 text-base font-semibold text-[var(--brand-cyan)]">
@@ -616,15 +616,15 @@ export function SlideRenderer({
 
       {!isSpecial ? (
         <header className="mb-2 shrink-0 text-start">
-          <h2 className="text-[1.35rem] font-bold leading-tight tracking-tight">
+          <h2 className="text-[1.35em] font-bold leading-tight tracking-tight">
             {slide.title}
           </h2>
           {slide.keyMessage ? (
             <div className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2">
-              <p className="text-[0.7rem] font-bold uppercase tracking-wide text-[var(--brand-cyan-dark)]">
+              <p className="text-[0.7em] font-bold uppercase tracking-wide text-[var(--brand-cyan-dark)]">
                 {strings.keyMessage}
               </p>
-              <p className="mt-0.5 text-[0.9rem] font-medium leading-snug text-[var(--text-muted)]">
+              <p className="mt-0.5 text-[0.9em] font-medium leading-snug text-[var(--text-muted)]">
                 {slide.keyMessage}
               </p>
             </div>

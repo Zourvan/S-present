@@ -114,7 +114,7 @@ function SlideFlowNode({ data }: NodeProps) {
       <Handle id="bottom-source" type="source" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" style={{ left: "50%" }} />
       <Handle id="bottom-source-a" type="source" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" style={{ left: "32%" }} />
       <Handle id="bottom-source-b" type="source" position={Position.Bottom} isConnectable={false} className="slide-flow-handle" style={{ left: "68%" }} />
-      <p className="max-w-full text-[0.92rem] font-bold leading-snug break-words">
+      <p className="max-w-full text-[0.92em] font-bold leading-snug break-words">
         {d.label}
       </p>
     </div>

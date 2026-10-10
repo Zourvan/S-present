@@ -27,7 +27,7 @@ export function ComparisonTable({
               {table.headers.map((h) => (
                 <th
                   key={h}
-                  className="border-b-2 border-[var(--brand-cyan)]/30 px-2.5 py-2 text-[0.85rem] font-bold leading-snug text-[var(--text-ink)]"
+                  className="border-b-2 border-[var(--brand-cyan)]/30 px-2.5 py-2 text-[0.85em] font-bold leading-snug text-[var(--text-ink)]"
                 >
                   {h}
                 </th>
@@ -50,7 +50,7 @@ export function ComparisonTable({
                   {row.map((cell, j) => (
                     <td
                       key={`${i}-${j}`}
-                      className={`border-b border-[var(--border)] px-2.5 py-2 align-middle text-[0.9rem] leading-snug text-[var(--text-ink)] ${
+                      className={`border-b border-[var(--border)] px-2.5 py-2 align-middle text-[0.9em] leading-snug text-[var(--text-ink)] ${
                         j === 0 ? "font-bold" : "font-semibold"
                       }`}
                     >
