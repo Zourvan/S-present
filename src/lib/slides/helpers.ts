@@ -49,8 +49,9 @@ export function getMaxReveal(slide: Slide): number {
     case "presenter":
       return Math.max(declared, 2);
     case "thanksQa": {
+      // title=0, closing=1, questions label=2, then questions at i+3
       const q = vd?.questions?.length ?? 0;
-      if (q > 0) return Math.max(declared, 2 + q);
+      if (q > 0) return Math.max(declared, q + 3);
       return Math.max(declared, vd?.closing ? 3 : 2);
     }
     case "monitoringChart":
@@ -75,10 +76,14 @@ export function getMaxReveal(slide: Slide): number {
       const withCallout = vd?.callout ? Math.max(layers, items) + 1 : Math.max(layers, items);
       return Math.max(declared, withCallout, 1);
     }
-    case "hierarchy":
-      return Math.max(declared, vd?.layers?.length ?? contentLen, 1);
-    case "overviewGrid":
-      return Math.max(declared, vd?.items?.length ?? contentLen, 1);
+    case "hierarchy": {
+      const layers = vd?.layers?.length ?? contentLen;
+      return Math.max(declared, vd?.callout ? layers + 1 : layers, 1);
+    }
+    case "overviewGrid": {
+      const items = vd?.items?.length ?? contentLen;
+      return Math.max(declared, vd?.callout ? items + 1 : items, 1);
+    }
     case "comparisonTable": {
       const rows = vd?.table?.rows?.length ?? 1;
       return Math.max(declared, vd?.callout ? rows + 1 : rows, 1);

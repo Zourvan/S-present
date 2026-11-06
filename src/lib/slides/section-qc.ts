@@ -30,7 +30,6 @@ export const qcSlides = [
             "How do we implement a planned change in a controlled way?",
           ],
         ],
-        caption: "These systems are linked, but they do not replace one another.",
       },
     },
     references: ["R1", "R3", "R4"],
@@ -65,8 +64,6 @@ export const qcSlides = [
           { from: "ct", to: "rv" },
         ],
       },
-      callout:
-        "QRM is not a tool to justify unacceptable practice or to bypass requirements.",
     },
     references: ["R3"],
     speakerNotes: "Reference: ICH Q9(R1), sections 3 and 4.",
@@ -76,8 +73,9 @@ export const qcSlides = [
     id: "s31-deviation-mgmt",
     section: "qcValidation",
     title: "Deviation Management",
-    content: [
+    keyMessage:
       "Classification follows the approved procedure and potential impact.",
+    content: [
       "Preserve evidence and document decisions throughout.",
     ],
     visualType: "processSteps",
@@ -101,11 +99,11 @@ export const qcSlides = [
         ],
       },
       callout:
-        "A deviation may relate to process, equipment, materials, documentation, or storage conditions. Classification follows the approved procedure and potential impact.",
+        "A deviation may relate to process, equipment, materials, documentation, or storage conditions.",
     },
     references: ["R1", "R2"],
     speakerNotes: "Reference: EU GMP Chapter 1; EU GDP Chapter 1.",
-    revealSteps: 6,
+    revealSteps: 7,
   }),
   slide(32, {
     id: "s32-product-impact",
@@ -113,22 +111,39 @@ export const qcSlides = [
     title: "Product Impact Assessment",
     keyMessage:
       "Product impact assessment and root-cause investigation are different, complementary activities.",
-    content: [
-      "Which batches, materials, or systems are involved?",
-      "What are the start and end times of the event?",
-      "Which quality attributes may be affected?",
-      "Are other batches or products also involved?",
-      "Is there enough data for a decision?",
-      "Is immediate action or notification required?",
-    ],
-    visualType: "callout",
+    content: [],
+    visualType: "overviewGrid",
     visualData: {
-      callout:
-        "Product impact assessment and root-cause investigation are different, complementary activities.",
+      items: [
+        {
+          title: "Scope",
+          body: "Which batches, materials, or systems are involved?",
+        },
+        {
+          title: "Time window",
+          body: "What are the start and end times of the event?",
+        },
+        {
+          title: "Attributes",
+          body: "Which quality attributes may be affected?",
+        },
+        {
+          title: "Other products",
+          body: "Are other batches or products also involved?",
+        },
+        {
+          title: "Data sufficiency",
+          body: "Is there enough data for a decision?",
+        },
+        {
+          title: "Immediate action",
+          body: "Is immediate action or notification required?",
+        },
+      ],
     },
     references: ["R1", "R3"],
     speakerNotes: "Reference: EU GMP Chapters 1 and 8; ICH Q9(R1).",
-    revealSteps: 7,
+    revealSteps: 6,
   }),
   slide(33, {
     id: "s33-rca",
@@ -136,10 +151,7 @@ export const qcSlides = [
     title: "Root Cause Analysis — RCA",
     keyMessage:
       "“Human error” should not be the stopping point when method, design, or system weaknesses remain.",
-    content: [
-      "Evidence sources: records and chronology; process and equipment data; interviews with relevant people; recent changes and similar-event trends.",
-      "Example tools: Five Whys and Fishbone.",
-    ],
+    content: [],
     visualType: "relationship",
     visualData: {
       items: [
@@ -148,8 +160,7 @@ export const qcSlides = [
         { title: "Interviews", body: "Context from people involved" },
         { title: "Changes & trends", body: "Similar prior events" },
       ],
-      callout:
-        "“Human error” should not be the stopping point when method, design, or system weaknesses remain. Example tools: Five Whys and Fishbone.",
+      callout: "Example tools: Five Whys and Fishbone.",
     },
     references: ["R1", "R4"],
     speakerNotes: "Reference: EU GMP Chapter 1; ICH Q10 section 3.2.2.",
@@ -178,21 +189,21 @@ export const qcSlides = [
             "Remove the cause of a potential problem and prevent occurrence",
           ],
         ],
-        caption: "Completing an action is not the same as proving it was effective.",
       },
       callout:
         "Retraining is appropriate only when linked to the identified cause or weakness.",
     },
     references: ["R4", "R1"],
     speakerNotes: "Reference: ICH Q10 section 3.2.2; EU GMP Chapter 1.",
-    revealSteps: 3,
+    revealSteps: 4,
   }),
   slide(35, {
     id: "s35-change-control",
     section: "qcValidation",
     title: "Change Control",
-    content: [
+    keyMessage:
       "Assess product quality, patient safety, validated status, and regulatory impact before approval.",
+    content: [
       "Cover documentation, training, supply, manufacture, testing, and distribution.",
     ],
     visualType: "processSteps",
@@ -223,6 +234,8 @@ export const qcSlides = [
     id: "s36-integrated-example",
     section: "qcValidation",
     title: "Integrated Example: Replacing a Cold-Store Monitoring System",
+    keyMessage:
+      "A bridge from GDP warehouse control into linked quality systems.",
     content: [],
     visualType: "comparisonTable",
     visualData: {

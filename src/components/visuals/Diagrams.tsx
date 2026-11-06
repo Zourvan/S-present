@@ -75,8 +75,10 @@ export function OverviewGrid({
 
   return (
     <div
-      className={`grid gap-2 sm:gap-2.5 ${cols} ${
-        fill ? "min-h-0 flex-1 content-stretch auto-rows-fr" : "auto-rows-fr"
+      className={`grid gap-2.5 sm:gap-3 ${cols} ${
+        fill
+          ? "min-h-0 h-full flex-1 content-stretch auto-rows-fr"
+          : "auto-rows-fr"
       }`}
     >
       {items.map((item, i) => (
@@ -87,30 +89,31 @@ export function OverviewGrid({
           className={fill ? "min-h-0 h-full" : undefined}
         >
           <div
-            className={`flex h-full flex-col rounded-lg border border-[var(--border)] bg-[var(--surface)] ${
-              compact || fill
-                ? "min-h-0 p-2.5 md:p-3"
-                : "min-h-[6rem] p-3 md:p-4"
+            className={`flex h-full flex-col border border-[var(--border)] bg-[var(--surface)] ${
+              fill
+                ? "min-h-0 rounded-lg p-3.5 md:p-4"
+                : compact
+                  ? "min-h-0 rounded-md p-2.5 md:p-3"
+                  : "min-h-[6.5rem] rounded-lg p-3.5 md:p-4"
             }`}
           >
-            <div
-              className={`mb-1 flex items-center justify-center rounded-full bg-[var(--brand-cyan)] font-bold text-white ${
-                compact || fill ? "h-6 w-6 text-xs" : "mb-1.5 h-7 w-7 text-sm"
-              }`}
-            >
-              {toLocaleDigits(i + 1, locale)}
+            <div className="mb-2 flex items-center gap-2 text-[0.8em] font-bold text-[var(--brand-cyan)]">
+              <span className="tabular-nums tracking-wide">
+                {toLocaleDigits(String(i + 1).padStart(2, "0"), locale)}
+              </span>
+              <span className="h-px flex-1 bg-[var(--border)]" aria-hidden />
             </div>
             <p
-              className={`font-bold leading-snug ${
-                compact || fill ? "text-[0.9em]" : "text-sm md:text-base"
+              className={`font-bold leading-snug text-[var(--slide-title)] ${
+                fill ? "text-[1.05em]" : compact ? "text-[0.95em]" : "text-[1.02em]"
               }`}
             >
               {item.title}
             </p>
             {item.body ? (
               <p
-                className={`mt-1 flex-1 font-medium leading-snug text-[var(--text-muted)] ${
-                  compact || fill ? "text-[0.78em]" : "text-sm md:text-[0.95em]"
+                className={`mt-1.5 flex-1 font-medium leading-snug text-[var(--text-muted)] ${
+                  fill ? "text-[0.95em]" : compact ? "text-[0.82em]" : "text-[0.9em]"
                 }`}
               >
                 {item.body}

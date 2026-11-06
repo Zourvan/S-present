@@ -6,17 +6,38 @@ export const foundationsSlides = [
     section: "foundations",
     title: "Learning Objectives",
     keyMessage: "By the end of this session we will be able to:",
-    content: [
-      "Explain the difference and relationship between GMP and GDP.",
-      "Recognize the main requirements of the nine EU GMP chapters.",
-      "Understand the role of documentation and data integrity.",
-      "State the principles of identification, labelling, and label control.",
-      "Recognize the links between deviation, risk, CAPA, and change.",
-      "Select an appropriate first response when facing a quality event.",
-    ],
-    visualType: "bullets",
+    content: [],
+    visualType: "overviewGrid",
+    visualData: {
+      items: [
+        {
+          title: "GMP ↔ GDP",
+          body: "Explain the difference and relationship between GMP and GDP.",
+        },
+        {
+          title: "Nine chapters",
+          body: "Recognize the main requirements of the nine EU GMP chapters.",
+        },
+        {
+          title: "Documentation",
+          body: "Understand the role of documentation and data integrity.",
+        },
+        {
+          title: "Labelling",
+          body: "State the principles of identification, labelling, and label control.",
+        },
+        {
+          title: "Quality systems",
+          body: "Recognize the links between deviation, risk, CAPA, and change.",
+        },
+        {
+          title: "First response",
+          body: "Select an appropriate first response when facing a quality event.",
+        },
+      ],
+    },
     speakerNotes:
-      "Use this slide to set expectations; return to these bullets in the closing summary.",
+      "Use this slide to set expectations; return to these pillars in the closing summary.",
     revealSteps: 6,
   }),
   slide(3, {
@@ -25,7 +46,7 @@ export const foundationsSlides = [
     title: "Why Final Testing Alone Is Not Enough",
     keyMessage: "Quality cannot be assured by final testing alone.",
     content: [
-      "Testing is performed on samples and defined attributes.",
+      "Testing covers samples and defined attributes — not the whole process.",
       "Not all process errors are revealed by final testing.",
       "Labelling errors, mix-ups, or data defects may go undetected.",
       "Quality must be built into the process and preserved along the chain.",
@@ -44,26 +65,41 @@ export const foundationsSlides = [
     section: "foundations",
     title: "Medicine Quality from the Patient’s Perspective",
     keyMessage: "Ultimate goal: patient protection",
-    content: [
-      "Correct identity throughout its authorised shelf life.",
-      "Appropriate strength or amount of active substance.",
-      "Relevant purity and microbiological quality requirements met.",
-      "Expected performance delivered.",
-      "Supplied in suitable packaging with correct information.",
-    ],
-    visualType: "callout",
+    content: [],
+    visualType: "overviewGrid",
     visualData: {
-      callout: "Ultimate goal: patient protection",
+      items: [
+        {
+          title: "Identity",
+          body: "Correct identity throughout authorised shelf life.",
+        },
+        {
+          title: "Strength",
+          body: "Appropriate strength or amount of active substance.",
+        },
+        {
+          title: "Purity",
+          body: "Relevant purity and microbiological quality requirements met.",
+        },
+        {
+          title: "Performance",
+          body: "Expected performance delivered.",
+        },
+        {
+          title: "Information",
+          body: "Suitable packaging with correct information.",
+        },
+      ],
     },
     references: ["R1", "R3"],
     speakerNotes:
       "Critical quality attributes depend on product type; for example, sterility is not required for every dosage form. Reference: EU GMP Chapter 1; ICH Q9(R1).",
-    revealSteps: 6,
+    revealSteps: 5,
   }),
   slide(5, {
     id: "s05-gmp-vs-gdp",
     section: "foundations",
-    title: "Difference and Relationship: GMP and GDP",
+    title: "GMP and GDP — Difference and Relationship",
     keyMessage:
       "Shared goal: control activities that affect quality and protect the patient.",
     content: [
@@ -91,7 +127,6 @@ export const foundationsSlides = [
             "Temperature excursion, damage, broken traceability",
           ],
         ],
-        caption: "Shared goal: control quality-affecting activities and protect patients.",
       },
     },
     references: ["R1", "R2"],
@@ -104,20 +139,26 @@ export const foundationsSlides = [
     section: "foundations",
     title: "Quality System Across the Product Lifecycle",
     keyMessage: "Pharmaceutical Quality System — PQS",
-    content: [
-      "Product and process knowledge is managed.",
-      "Quality risks are identified and controlled.",
-      "Process performance and product quality are monitored.",
-      "Problems and changes are managed systematically.",
-      "Improvement opportunities are identified.",
-    ],
+    content: [],
     visualType: "lifecycle",
     visualData: {
       items: [
-        { title: "Development", body: "Build product and process knowledge" },
-        { title: "Tech transfer", body: "Move knowledge into operations" },
-        { title: "Commercial manufacture", body: "Monitor and control" },
-        { title: "Discontinuation", body: "Manage end of supply" },
+        {
+          title: "Development",
+          body: "Build product and process knowledge; identify quality risks early.",
+        },
+        {
+          title: "Tech transfer",
+          body: "Move knowledge into operations with controlled processes.",
+        },
+        {
+          title: "Commercial manufacture",
+          body: "Monitor performance, product quality, and systematic changes.",
+        },
+        {
+          title: "Discontinuation",
+          body: "Manage end of supply; capture improvement opportunities.",
+        },
       ],
       callout:
         "ICH Q10 enablers: knowledge management and quality risk management.",
@@ -132,21 +173,26 @@ export const foundationsSlides = [
     title: "Management Responsibility and Quality Culture",
     keyMessage:
       "Quality culture is shaped by daily decisions and behaviours of management and staff.",
-    content: [
-      "Provide resources and competent personnel.",
-      "Define and communicate responsibilities and authorities.",
-      "Support transparent reporting of errors and unusual conditions.",
-      "Prevent production pressure from overriding quality requirements.",
-      "Review quality-system performance and effectiveness.",
-    ],
-    visualType: "callout",
+    content: [],
+    visualType: "splitPathways",
     visualData: {
-      callout:
-        "Quality culture is shaped by daily decisions and behaviours of management and staff.",
+      leftTitle: "Management provides",
+      rightTitle: "Culture requires",
+      leftSteps: [
+        "Resources and competent personnel",
+        "Clear responsibilities and authorities",
+        "Review of quality-system performance",
+      ],
+      rightSteps: [
+        "Transparent reporting of errors",
+        "Quality requirements over production pressure",
+        "Fair review without rushed blame",
+      ],
+      shared: ["Daily decisions shape culture"],
     },
     references: ["R1", "R4"],
     speakerNotes:
       "Fair review without rushed blame does not mean removing accountability. Reference: EU GMP Chapter 1; ICH Q10 section 2.",
-    revealSteps: 6,
+    revealSteps: 4,
   }),
 ];

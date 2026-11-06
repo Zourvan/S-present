@@ -19,7 +19,7 @@ function getReducedMotionServerSnapshot() {
   return false;
 }
 
-function usePrefersReducedMotion(): boolean {
+export function usePrefersReducedMotion(): boolean {
   return useSyncExternalStore(
     subscribeReducedMotion,
     getReducedMotionSnapshot,
@@ -41,9 +41,14 @@ export function RevealItem({
   const reduce = usePrefersReducedMotion();
   const visible = revealStep > index || revealStep >= 99;
 
+  // Keep layout space so grids/tables do not collapse; dim unrevealed steps.
   if (reduce) {
     return (
-      <div className={className} style={{ opacity: visible ? 1 : 0.25 }}>
+      <div
+        className={className}
+        style={{ opacity: visible ? 1 : 0.16 }}
+        aria-hidden={!visible}
+      >
         {children}
       </div>
     );
@@ -54,10 +59,15 @@ export function RevealItem({
       className={className}
       initial={false}
       animate={{
-        opacity: visible ? 1 : 0.2,
-        y: visible ? 0 : 8,
+        opacity: visible ? 1 : 0.16,
+        y: visible ? 0 : 6,
       }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      transition={{
+        duration: 0.28,
+        delay: visible ? Math.min(index * 0.025, 0.15) : 0,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      aria-hidden={!visible}
     >
       {children}
     </motion.div>
@@ -78,30 +88,32 @@ export function AnimatedPath({
   const reduce = usePrefersReducedMotion();
   const exporting =
     typeof document !== "undefined" &&
-    document.documentElement.dataset.slideExport === "1";
-  if (reduce || exporting || !visible) {
+    document.documentElement.dataset.slideExport === "true";
+
+  if (reduce || exporting) {
     return (
       <path
         d={d}
         fill="none"
         stroke={color}
-        strokeWidth={3}
-        opacity={visible ? 1 : 0.2}
+        strokeWidth={2}
+        opacity={visible ? 1 : 0}
       />
     );
   }
+
   return (
     <motion.path
       d={d}
       fill="none"
       stroke={color}
-      strokeWidth={3}
-      strokeLinecap="round"
+      strokeWidth={2}
       initial={{ pathLength: 0, opacity: 0 }}
-      animate={{ pathLength: 1, opacity: 1 }}
-      transition={{ duration: 1.1, delay, ease: "easeInOut" }}
+      animate={{
+        pathLength: visible ? 1 : 0,
+        opacity: visible ? 1 : 0,
+      }}
+      transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
     />
   );
 }
-
-export { usePrefersReducedMotion };

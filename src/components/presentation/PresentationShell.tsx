@@ -66,12 +66,6 @@ export function PresentationShell() {
   }, [index, locale]);
   const maxReveal = slide ? getMaxReveal(slide) : 1;
   const groups = useMemo(() => getSlidesGroupedBySection(), []);
-  const presenterName = useMemo(() => {
-    const source = SLIDES.find((item) => item.id === "s01-presenter");
-    if (!source) return "";
-    return resolveSlide(source, locale).visualData?.presenter?.name ?? "";
-  }, [locale]);
-
   if (jumpSource.index !== index || jumpSource.locale !== locale) {
     setJumpSource({ index, locale });
     setJumpValue(toLocaleDigits(index + 1, locale));
@@ -294,14 +288,6 @@ export function PresentationShell() {
           <span className="hidden text-xs text-[var(--text-muted)] lg:inline">
             {strings.appTitle}
           </span>
-          {presenterName ? (
-            <span className="shrink-0 text-sm font-semibold text-[var(--text-ink)]">
-              <span className="mx-1 text-[var(--text-muted)]" aria-hidden>
-                ·
-              </span>
-              {presenterName}
-            </span>
-          ) : null}
         </div>
 
         {/* Primary actions — always visible */}
@@ -540,15 +526,23 @@ export function PresentationShell() {
                 initial={
                   reduce
                     ? false
-                    : { opacity: 0, x: direction > 0 ? 48 : -48 }
+                    : {
+                        opacity: 0,
+                        y: direction > 0 ? 14 : -14,
+                        scale: 0.985,
+                      }
                 }
-                animate={{ opacity: 1, x: 0 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={
                   reduce
                     ? undefined
-                    : { opacity: 0, x: direction > 0 ? -48 : 48 }
+                    : {
+                        opacity: 0,
+                        y: direction > 0 ? -10 : 10,
+                        scale: 0.99,
+                      }
                 }
-                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
               >
                 <SlideRenderer slide={slide} revealStep={revealStep} />
               </motion.div>

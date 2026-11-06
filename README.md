@@ -1,6 +1,6 @@
 # GMP Presentation
 
-Interactive slide deck for **Ronagen** (روناژن): *GMP in Pharmaceutical Manufacturing*. It covers a shared pharmaceutical quality system with separate pathways for conventional oral medicines and biotechnology-derived products. The interface is available in English and Persian.
+Interactive slide deck for **Ronagen** (روناژن): *GMP & GDP Fundamentals and Key Pharmaceutical Quality Systems*. It covers EU GMP Part I, EU GDP, and linked quality systems (QRM, deviation, CAPA, change). The interface is available in English and Persian.
 
 ## Requirements
 
@@ -22,6 +22,8 @@ Open [http://localhost:3000](http://localhost:3000). If that port is taken, use 
 | `npm run build` | Production build |
 | `npm run start` | Serve the production build |
 | `npm run lint` | Run ESLint |
+| `npm run typecheck` | TypeScript check |
+| `npm run check` | Typecheck, lint, and build |
 
 ## Controls
 
@@ -39,17 +41,16 @@ Click the left or right edge of the stage to move, and scroll to step through re
 
 ## Deck
 
-The deck is 63 slides, assembled in `src/lib/slides/index.ts`.
+The deck is **43 slides**, assembled in `src/lib/slides/index.ts`.
 
 | Section | File |
 | --- | --- |
 | Opening | `src/lib/slides/section-open.ts` |
-| Foundations and regulatory framework | `src/lib/slides/section-foundations.ts` |
-| Personnel, facilities, and operations | `src/lib/slides/section-operations.ts` |
-| Manufacturing technologies | `src/lib/slides/section-manufacturing.ts` |
-| QC, validation, and digital systems | `src/lib/slides/section-qc.ts` |
-| Quality events and implementation | `src/lib/slides/section-lifecycle.ts` and `section-deviations.ts` |
-| Closing | `src/lib/slides/section-close.ts` |
+| Foundations | `src/lib/slides/section-foundations.ts` |
+| EU GMP chapters & label control | `src/lib/slides/section-operations.ts` |
+| GDP in storage & distribution | `src/lib/slides/section-manufacturing.ts` |
+| Key quality systems | `src/lib/slides/section-qc.ts` |
+| Audit, case study & closing | `src/lib/slides/section-close.ts` |
 
 English is the source language. Persian copy lives in the matching `*.fa.ts` files and is merged at runtime by `src/lib/slides/resolve.ts`.
 
@@ -57,7 +58,7 @@ Pathway colors: oral (coral), biotech (burgundy), shared controls (Ronagen cyan)
 
 ## Editing content
 
-Presenter name and role are in `src/lib/slides/section-open.ts` (`s01-presenter`). The Persian presenter fields are in `src/lib/slides/section-open.fa.ts`.
+Presenter name and role are in `src/lib/slides/section-open.ts` (`s01-title` → `visualData.presenter`). The Persian presenter fields are in `src/lib/slides/section-open.fa.ts`.
 
 To change a slide, edit its English object, then the matching override in the `*.fa.ts` file if Persian should differ. UI chrome strings are in `src/lib/i18n/strings.ts`.
 
@@ -70,16 +71,16 @@ Use **Export** in the toolbar to download a PDF (`jspdf`) or a PowerPoint file (
 ## Project layout
 
 ```
-src/app/                  Next.js App Router entry
-src/components/presentation/   shell, stage, and slide renderer
-src/components/visuals/   charts, flows, and diagrams
-src/lib/slides/           slide content (English and Persian)
-src/lib/export/           PDF and PowerPoint export
-src/lib/i18n/             interface strings
-public/brand/             logo
-public/fonts/             Vazirmatn
+src/app/                       Next.js App Router entry
+src/components/presentation/   shell, stage, slide renderer, layouts
+src/components/visuals/        charts, flows, and diagrams
+src/lib/slides/                slide content (English and Persian)
+src/lib/export/                PDF and PowerPoint export
+src/lib/i18n/                  interface strings
+public/brand/                  logo
+public/fonts/                  Source Sans 3 and Vazirmatn
 ```
 
 ## Stack
 
-Next.js App Router, React, TypeScript, Tailwind CSS v4, Framer Motion, and `@xyflow/react`.
+Next.js App Router, React, TypeScript, Tailwind CSS v4, Framer Motion, Recharts, and `@xyflow/react`.

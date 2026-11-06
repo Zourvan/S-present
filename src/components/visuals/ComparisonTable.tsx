@@ -15,7 +15,9 @@ export function ComparisonTable({
   fill?: boolean;
 }) {
   const reduce = usePrefersReducedMotion();
-  const dense = table.rows.length >= 7;
+  const rowCount = table.rows.length;
+  const dense = rowCount >= 7;
+  const sparse = rowCount <= 4;
   const colCount = Math.max(table.headers.length, 1);
   // Narrow first column when it looks like an index / chapter column.
   const firstNarrow =
@@ -23,14 +25,30 @@ export function ComparisonTable({
     table.headers[0].length <= 12 &&
     table.rows.every((r) => (r[0]?.length ?? 0) <= 4);
 
+  const headClass = dense
+    ? "px-2.5 py-2 text-[0.85em]"
+    : fill && sparse
+      ? "px-4 py-4 text-[1.15em]"
+      : fill
+        ? "px-3.5 py-3 text-[1.02em]"
+        : "px-3 py-2.5 text-[0.95em]";
+
+  const cellClass = dense
+    ? "px-2.5 py-1.5 text-[0.95em]"
+    : fill && sparse
+      ? "px-4 py-5 text-[1.3em]"
+      : fill
+        ? "px-3.5 py-3.5 text-[1.15em]"
+        : "px-3 py-2.5 text-[1.08em]";
+
   return (
     <div
-      className={`w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] ${
+      className={`w-full overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] ${
         fill ? "flex min-h-0 h-full flex-col" : ""
       }`}
     >
       {table.caption ? (
-        <p className="shrink-0 border-b border-[var(--border)] bg-[var(--bg-cream)] px-3 py-1.5 text-[0.85em] font-semibold leading-snug text-[var(--text-ink)]">
+        <p className="shrink-0 border-b border-[var(--border)] px-3 py-2 text-[0.9em] font-medium leading-snug text-[var(--text-muted)]">
           {table.caption}
         </p>
       ) : null}
@@ -51,15 +69,11 @@ export function ComparisonTable({
             </colgroup>
           ) : null}
           <thead>
-            <tr className="bg-[var(--brand-cyan)]/15">
+            <tr className="bg-[var(--surface-elevated)]">
               {table.headers.map((h) => (
                 <th
                   key={h}
-                  className={`border-b-2 border-[var(--brand-cyan)]/30 font-bold leading-snug text-[var(--text-ink)] ${
-                    dense
-                      ? "px-2.5 py-1.5 text-[0.8em]"
-                      : "px-3 py-2 text-[0.9em]"
-                  }`}
+                  className={`border-b-2 border-[var(--brand-cyan)]/25 font-bold leading-snug text-[var(--slide-kicker)] ${headClass}`}
                 >
                   {h}
                 </th>
@@ -72,21 +86,20 @@ export function ComparisonTable({
               return (
                 <motion.tr
                   key={i}
-                  className="odd:bg-[var(--surface)] even:bg-[var(--bg-cream)]/55"
+                  className="odd:bg-[var(--surface)] even:bg-[var(--surface-elevated)]/60"
                   initial={false}
                   animate={{
-                    opacity: visible ? 1 : 0.28,
+                    opacity: visible ? 1 : 0.18,
                   }}
-                  transition={reduce ? { duration: 0 } : { duration: 0.3 }}
+                  transition={reduce ? { duration: 0 } : { duration: 0.28 }}
+                  aria-hidden={!visible}
                 >
                   {row.map((cell, j) => (
                     <td
                       key={`${i}-${j}`}
-                      className={`border-b border-[var(--border)] align-middle leading-snug text-[var(--text-ink)] ${
-                        dense
-                          ? "px-2.5 py-1 text-[0.92em]"
-                          : "px-3 py-2 text-[1em]"
-                      } ${j === 0 ? "font-bold" : "font-semibold"}`}
+                      className={`border-b border-[var(--border)] align-middle leading-snug text-[var(--text-ink)] ${cellClass} ${
+                        j === 0 ? "font-bold" : "font-semibold"
+                      }`}
                     >
                       {cell}
                     </td>

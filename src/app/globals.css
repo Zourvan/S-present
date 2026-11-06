@@ -46,19 +46,25 @@
   --font-vazirmatn: "Vazirmatn", "Source Sans 3", "Segoe UI", sans-serif;
   --brand-cyan: #00adc8;
   --brand-cyan-dark: #008a9e;
-  --bg-cream: #f4e7d6;
-  --bg-ivory: #fff9f2;
+  /* Cleaner warm ivory — still Ronagen-adjacent, less flat cream */
+  --bg-cream: #efe6dc;
+  --bg-ivory: #fbf7f2;
   --oral-coral: #d66270;
   --biotech-burgundy: #7d0a1b;
-  --text-ink: #1a1214;
-  --text-muted: #5c4a4e;
+  --text-ink: #161012;
+  --text-muted: #5a4c50;
   --warn-red: #9b1c2e;
   --surface: #ffffff;
-  --surface-elevated: #fff9f2;
-  --border: #e8d5c4;
-  --chrome-bg: rgba(255, 249, 242, 0.95);
-  --chrome-fg: #1a1214;
+  --surface-elevated: #f7f1ea;
+  --surface-soft: rgba(255, 255, 255, 0.72);
+  --border: #e2d4c6;
+  --chrome-bg: rgba(251, 247, 242, 0.94);
+  --chrome-fg: #161012;
   --shared-slate: #4a5568;
+  --slide-title: var(--text-ink);
+  --slide-kicker: var(--brand-cyan-dark);
+  --slide-body: var(--text-muted);
+  --accent-line: var(--brand-cyan);
   --tone-amber: #9a3412;
   --tone-amber-bg: #fff7ed;
   --tone-red: #9b1c2e;
@@ -68,7 +74,7 @@
   --risk-low: #065f46;
   --risk-moderate: #9a3412;
   --risk-high: #9b1c2e;
-  --slide-shadow: 0 12px 40px rgba(26, 18, 20, 0.12);
+  --slide-shadow: 0 10px 36px rgba(22, 16, 18, 0.1);
   --slide-w: 1280px;
   --slide-h: 720px;
   --slide-fs: 16px;
@@ -85,10 +91,15 @@
   --text-muted: #c4b4b0;
   --surface: #241c1e;
   --surface-elevated: #2f2628;
+  --surface-soft: rgba(47, 38, 40, 0.72);
   --border: #4a3a3e;
   --chrome-bg: rgba(26, 21, 22, 0.95);
   --chrome-fg: #f7f0ea;
   --shared-slate: #a0aec0;
+  --slide-title: var(--text-ink);
+  --slide-kicker: var(--brand-cyan);
+  --slide-body: var(--text-muted);
+  --accent-line: var(--brand-cyan);
   --tone-amber: #fdba74;
   --tone-amber-bg: #431407;
   --tone-red: #fda4af;
@@ -208,13 +219,53 @@ body {
   min-height: var(--slide-h);
   max-width: var(--slide-w);
   max-height: var(--slide-h);
-  background: var(--bg-ivory);
+  background:
+    radial-gradient(
+      120% 80% at 100% 0%,
+      color-mix(in srgb, var(--brand-cyan) 8%, transparent),
+      transparent 55%
+    ),
+    var(--bg-ivory);
   color: var(--text-ink);
   box-shadow: var(--slide-shadow);
   font-size: var(--slide-em);
-  line-height: 1.4;
+  line-height: 1.45;
   overflow: hidden;
   box-sizing: border-box;
+}
+
+.slide-stage h1,
+.slide-stage h2 {
+  color: var(--slide-title);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.slide-stage .slide-kicker {
+  color: var(--slide-kicker);
+  font-size: 0.7em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.slide-stage .slide-body-text {
+  color: var(--slide-body);
+  line-height: 1.45;
+}
+
+.slide-stage .accent-rule {
+  width: 2.5rem;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--accent-line);
+}
+
+/* Latin acronyms / English fragments inside Persian copy */
+html[lang="fa"] .slide-stage :where(code, .latin, .acronym) {
+  font-family: var(--font-source-sans);
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 /* Presenter control: thicker slide body text */
@@ -311,7 +362,7 @@ html[lang="fa"] .slide-stage {
 }
 
 .slide-stage table {
-  font-size: 0.95em;
+  font-size: 1em;
 }
 
 .slide-stage th,

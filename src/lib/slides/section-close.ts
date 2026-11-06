@@ -28,7 +28,6 @@ export const closeSlides = [
             "Compliance with legal requirements",
           ],
         ],
-        caption: "Common ground: evaluate objective evidence and identify gaps.",
       },
     },
     references: ["R1", "R2"],
@@ -40,31 +39,31 @@ export const closeSlides = [
     section: "close",
     title: "Evidence of an Effective Quality System",
     keyMessage: "For every activity, ask five questions.",
-    content: [
-      "Requirement: what is required?",
-      "Procedure: what is the approved method?",
-      "Practice: what is done in practice?",
-      "Record: what evidence of execution exists?",
-      "Effectiveness: how do we know the control worked?",
-    ],
-    visualType: "relationship",
+    content: [],
+    visualType: "processSteps",
     visualData: {
-      items: [
-        { title: "1. Requirement", body: "What is required?" },
-        { title: "2. Procedure", body: "What is the approved method?" },
-        { title: "3. Practice", body: "What is done in practice?" },
-        { title: "4. Record", body: "What evidence of execution exists?" },
-        {
-          title: "5. Effectiveness",
-          body: "How do we know the control worked?",
-        },
-      ],
+      flow: {
+        title: "Five evidence questions",
+        nodes: [
+          { id: "r", label: "Requirement" },
+          { id: "p", label: "Procedure" },
+          { id: "a", label: "Practice" },
+          { id: "rec", label: "Record" },
+          { id: "e", label: "Effectiveness" },
+        ],
+        edges: [
+          { from: "r", to: "p" },
+          { from: "p", to: "a" },
+          { from: "a", to: "rec" },
+          { from: "rec", to: "e" },
+        ],
+      },
       callout:
         "Label example: label-control procedure, issue and reconciliation records, discrepancy review, and labelling-error trends. This model is a training framework for this presentation; it is not an official EudraLex chapter title.",
     },
     speakerNotes:
       "Walk through the label example briefly if time allows.",
-    revealSteps: 5,
+    revealSteps: 6,
   }),
   slide(39, {
     id: "s39-inspection-behavior",
@@ -72,44 +71,72 @@ export const closeSlides = [
     title: "Professional Behaviour During Inspection",
     keyMessage:
       "Sustainable inspection readiness comes from correct daily operation of the system.",
-    content: [
-      "Answer accurately, honestly, and within your responsibility.",
-      "Clarify the question before answering if it is ambiguous.",
-      "Do not guess or offer unverified information.",
-      "Provide documents through controlled channels.",
-      "Correct an incorrect answer transparently and promptly.",
-      "Never falsify, conceal, or backdate.",
-    ],
-    visualType: "callout",
+    content: [],
+    visualType: "overviewGrid",
     visualData: {
-      callout:
-        "Sustainable inspection readiness comes from correct daily operation of the system.",
+      items: [
+        {
+          title: "Accurate answers",
+          body: "Answer honestly and within your responsibility.",
+        },
+        {
+          title: "Clarify first",
+          body: "Clarify ambiguous questions before answering.",
+        },
+        {
+          title: "No guessing",
+          body: "Do not offer unverified information.",
+        },
+        {
+          title: "Controlled documents",
+          body: "Provide documents through controlled channels.",
+        },
+        {
+          title: "Correct promptly",
+          body: "Correct an incorrect answer transparently.",
+        },
+        {
+          title: "Never falsify",
+          body: "Never falsify, conceal, or backdate.",
+        },
+      ],
     },
     speakerNotes:
       "Practical advice based on documentation and data-integrity principles.",
-    revealSteps: 7,
+    revealSteps: 6,
   }),
   slide(40, {
     id: "s40-case-temp-excursion",
     section: "close",
     title: "Case Study: Temperature Excursion",
     keyMessage: "Neither automatic rejection nor acceptance without evidence.",
-    content: [
-      "Record the event and control product status.",
-      "Review scope, duration, and data integrity.",
-      "Review prior excursions and related stability information.",
-      "Documented assessment by competent persons.",
-      "Decision by persons with authority.",
-      "Cause investigation, CAPA, and need for change.",
-    ],
-    visualType: "callout",
+    content: [],
+    visualType: "processSteps",
     visualData: {
+      flow: {
+        title: "Assessment path",
+        nodes: [
+          { id: "r", label: "Record & hold" },
+          { id: "s", label: "Scope & duration" },
+          { id: "d", label: "Data integrity" },
+          { id: "p", label: "Prior / stability" },
+          { id: "a", label: "Documented assessment" },
+          { id: "c", label: "CAPA / change" },
+        ],
+        edges: [
+          { from: "r", to: "s" },
+          { from: "s", to: "d" },
+          { from: "d", to: "p" },
+          { from: "p", to: "a" },
+          { from: "a", to: "c" },
+        ],
+      },
       callout:
-        "Hypothetical scenario: a product stored at 2–8 °C was held for about 90 minutes at up to 12 °C. Numbers in this example are not acceptance criteria. Neither automatic rejection nor acceptance without evidence.",
+        "Hypothetical scenario: a product stored at 2–8 °C was held for about 90 minutes at up to 12 °C. Numbers in this example are not acceptance criteria.",
     },
     references: ["R2", "R3"],
     speakerNotes:
-      "Reference: EU GDP Chapters 1, 3 and 9; ICH Q9(R1).",
+      "Reference: EU GDP Chapters 1, 3 and 9; ICH Q9(R1). Links back to warehouse and transport control.",
     revealSteps: 7,
   }),
   slide(41, {
@@ -118,14 +145,8 @@ export const closeSlides = [
     title: "Summary: Five Key Behaviours",
     keyMessage:
       "GMP and GDP are not merely a set of forms; they are a framework for patient protection.",
-    content: [
-      "Compliance — act per valid procedures within competence.",
-      "Transparency — do not hide errors or unfavourable data.",
-      "Traceability — record operations and decisions accurately and promptly.",
-      "Evidence-based decisions — scientific justification for product status and actions.",
-      "Continual improvement — address causes and evaluate action effectiveness.",
-    ],
-    visualType: "relationship",
+    content: [],
+    visualType: "overviewGrid",
     visualData: {
       items: [
         {
@@ -149,10 +170,8 @@ export const closeSlides = [
           body: "Address causes and evaluate action effectiveness.",
         },
       ],
-      callout:
-        "GMP and GDP are not merely a set of forms; they are a framework for patient protection.",
     },
-    revealSteps: 6,
+    revealSteps: 5,
   }),
   slide(42, {
     id: "s42-references",
@@ -160,13 +179,7 @@ export const closeSlides = [
     title: "References",
     keyMessage:
       "Confirm the version and effective date of each document before formal delivery. Competent-authority, destination-market, and site SOP requirements also apply.",
-    content: [
-      "EudraLex Volume 4, Part I — Chapters 1–9",
-      "Annex 11, Annex 15, Annex 16",
-      "EU GDP 2013/C 343/01",
-      "ICH Q9(R1) and ICH Q10",
-      "PIC/S PI 041",
-    ],
+    content: [],
     visualType: "references",
     visualData: {
       takeaways: [
@@ -181,6 +194,24 @@ export const closeSlides = [
     references: ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8"],
     speakerNotes:
       "Point to the in-app reference library for official URLs.",
+    revealSteps: 5,
+  }),
+  slide(43, {
+    id: "s43-thanks",
+    section: "close",
+    title: "Thank You",
+    content: [],
+    visualType: "thanksQa",
+    visualData: {
+      closing:
+        "Quality is built into the process and preserved across the supply chain — for the patient.",
+      questions: [
+        "Where do GMP and GDP meet most often in your daily work?",
+        "Which system — QRM, deviation, CAPA, or change — needs the clearest next step?",
+      ],
+    },
+    speakerNotes:
+      "Close with questions. Invite one concrete example from the audience if time allows.",
     revealSteps: 5,
   }),
 ];

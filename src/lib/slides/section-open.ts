@@ -7,18 +7,13 @@ export const openSlides = [
     title: "GMP & GDP Fundamentals and Key Pharmaceutical Quality Systems",
     keyMessage:
       "From controlled manufacture to preserving quality across the supply chain",
-    content: [
-      "Based on EudraLex Volume 4 — Part I",
-      "EU GDP Guidelines",
-      "ICH Q9(R1) & ICH Q10",
-      "Presenter name | Organizational unit | Date",
-    ],
+    content: [],
     visualType: "titleHero",
     visualData: {
       subtitle:
         "From controlled manufacture to preserving quality across the supply chain",
       supporting: [
-        "Based on: EudraLex Volume 4 — Part I",
+        "EudraLex Volume 4 — Part I",
         "EU GDP Guidelines",
         "ICH Q9(R1) & ICH Q10",
       ],

@@ -28,9 +28,10 @@ const SIDE_PAD = 22;
 const TOP_PAD = 16;
 const BOTTOM_PAD = 16;
 const GAP_X = 48;
-const NODE_H_BASE = 86;
-const NODE_H_WITH_BODY = 112;
-const MAX_CANVAS_H = 290;
+const NODE_H_BASE = 112;
+const NODE_H_WITH_BODY = 168;
+const MAX_CANVAS_H = 460;
+const MIN_CANVAS_H = 220;
 const ARROW = 12;
 /** Pull arrow tips/tails slightly into the card border so they read as docked. */
 const EDGE_INSET = 2;
@@ -93,7 +94,7 @@ function SlideFlowNode({ data }: NodeProps) {
           {toLocaleDigits(d.index + 1, d.locale)}
         </span>
         <p
-          className="w-full text-[0.95em] font-extrabold leading-[1.2] text-balance"
+          className="w-full text-[1.05em] font-extrabold leading-[1.2] text-balance"
           style={{ color: active ? CYAN_ACTIVE : CYAN_SOFT }}
         >
           {d.label}

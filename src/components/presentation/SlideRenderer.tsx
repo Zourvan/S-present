@@ -35,6 +35,7 @@ import {
 import { DeviationVisual } from "@/components/visuals/DeviationVisuals";
 import { SlideFlow } from "@/components/visuals/flow/SlideFlow";
 import { toLocaleDigits } from "@/lib/i18n/digits";
+import { SlideHeader, KeyInsight } from "@/components/presentation/layouts";
 
 const CITATION_PREVIEW = 2;
 const LIBRARY_PREVIEW = 6;
@@ -62,8 +63,8 @@ function BulletList({
     <ul className="space-y-2.5 pe-1 sm:space-y-3">
       {items.map((item, i) => (
         <RevealItem key={item} index={startIndex + i} revealStep={revealStep}>
-          <li className="flex gap-3 text-[1.15em] font-semibold leading-snug sm:text-[1.2em]">
-            <span className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-[var(--brand-cyan)]" />
+          <li className="flex gap-3 text-[1.1em] font-semibold leading-snug text-[var(--slide-title)] sm:text-[1.15em]">
+            <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--brand-cyan)]" />
             <span className="min-w-0">{item}</span>
           </li>
         </RevealItem>
@@ -149,15 +150,21 @@ function SlideBodyFit({
 function SlideChrome({ slide }: { slide: Slide }) {
   const { strings, locale } = useApp();
   const brandName = locale === "fa" ? strings.brandFa : strings.brand;
+  const sectionLabel = strings.sections[slide.section];
   return (
-    <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between px-6 pt-3">
-      <div className="flex items-center gap-2">
+    <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-3 px-6 pt-3">
+      <div className="flex min-w-0 items-center gap-2">
         <BrandLogo size="chrome" />
-        <span className="text-xs font-bold tracking-wide text-[var(--brand-cyan)]">
-          {brandName}
-        </span>
+        <div className="min-w-0">
+          <span className="block text-[0.65em] font-bold tracking-wide text-[var(--brand-cyan)]">
+            {brandName}
+          </span>
+          <span className="block truncate text-[0.6em] font-semibold text-[var(--text-muted)]">
+            {sectionLabel}
+          </span>
+        </div>
       </div>
-      <span className="rounded bg-[var(--bg-cream)] px-2 py-0.5 text-xs font-bold text-[var(--text-ink)]">
+      <span className="shrink-0 rounded-md border border-[var(--border)] bg-[var(--surface-soft)] px-2 py-0.5 text-[0.65em] font-bold tabular-nums text-[var(--text-ink)]">
         {toLocaleDigits(String(slide.number).padStart(2, "0"), locale)} /{" "}
         {toLocaleDigits(String(TOTAL_SLIDES).padStart(2, "0"), locale)}
       </span>
@@ -304,27 +311,34 @@ function VisualBlock({
         (vd.leftSteps?.length ?? 0) > 0 || (vd.rightSteps?.length ?? 0) > 0;
       const supporting = vd.supporting ?? slide.content;
       return (
-        <div className="flex h-full flex-col justify-center gap-2.5">
+        <div className="relative flex h-full flex-col justify-center gap-4 px-4">
+          <div
+            className="pointer-events-none absolute inset-x-8 top-[12%] h-px bg-gradient-to-r from-transparent via-[var(--border)] to-transparent"
+            aria-hidden
+          />
           <RevealItem index={0} revealStep={revealStep}>
             <div className="text-center">
               <BrandLogo
                 size="hero"
                 priority
-                className="mx-auto mb-2 drop-shadow-sm"
+                className="mx-auto mb-4 drop-shadow-sm"
               />
-              <h1 className="text-[1.75em] font-bold leading-tight tracking-tight text-[var(--text-ink)]">
+              <p className="slide-kicker mb-3">{brandName}</p>
+              <h1 className="mx-auto max-w-4xl text-[2.15em] font-bold tracking-tight text-[var(--slide-title)]">
                 {slide.title}
               </h1>
-              <p className="mx-auto mt-1 max-w-3xl text-[0.95em] font-medium leading-snug text-[var(--text-muted)]">
-                {vd.subtitle ?? slide.keyMessage}
-              </p>
+              <div className="mx-auto mt-4 flex max-w-2xl justify-center">
+                <KeyInsight>
+                  {vd.subtitle ?? slide.keyMessage ?? ""}
+                </KeyInsight>
+              </div>
               {vd.presenter ? (
-                <p className="mt-1.5 text-sm font-medium text-[var(--text-muted)]">
+                <p className="mt-4 text-[0.9em] font-medium text-[var(--text-muted)]">
                   {vd.presenter.name}
                   {vd.presenter.role ? ` · ${vd.presenter.role}` : ""}
                 </p>
               ) : null}
-              <p className="mt-1.5 text-base font-semibold text-[var(--brand-cyan)]">
+              <p className="mt-2 text-[0.85em] font-semibold text-[var(--brand-cyan)]">
                 {systemDate ? `${systemDate} · ${brandName}` : brandName}
               </p>
             </div>
@@ -350,9 +364,14 @@ function VisualBlock({
             </>
           ) : supporting.length ? (
             <RevealItem index={1} revealStep={revealStep}>
-              <ul className="mx-auto mt-1 max-w-2xl space-y-1.5 text-center text-[0.95em] font-medium text-[var(--text-ink)]">
+              <ul className="mx-auto mt-1 flex max-w-3xl flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-center text-[0.85em] font-medium text-[var(--text-muted)]">
                 {supporting.map((item) => (
-                  <li key={item}>{item}</li>
+                  <li
+                    key={item}
+                    className="rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-1"
+                  >
+                    {item}
+                  </li>
                 ))}
               </ul>
             </RevealItem>
@@ -388,28 +407,35 @@ function VisualBlock({
 
     case "thanksQa": {
       return (
-        <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
+        <div className="relative flex h-full flex-col items-center justify-center gap-5 px-6 text-center">
+          <div
+            className="pointer-events-none absolute inset-x-16 top-[18%] h-px bg-gradient-to-r from-transparent via-[var(--border)] to-transparent"
+            aria-hidden
+          />
           <BrandLogo size="thanks" className="drop-shadow-sm" />
           <RevealItem index={0} revealStep={revealStep}>
-            <h1 className="text-3xl font-bold text-[var(--brand-cyan)]">
-              {strings.thanks}
+            <h1 className="text-[2.4em] font-bold tracking-tight text-[var(--brand-cyan)]">
+              {slide.title || strings.thanks}
             </h1>
           </RevealItem>
-          <RevealItem index={1} revealStep={revealStep}>
-            <p className="text-xl font-semibold">{strings.questions}</p>
-          </RevealItem>
           {vd.closing ? (
-            <RevealItem index={2} revealStep={revealStep}>
-              <p className="max-w-2xl text-sm italic text-[var(--text-muted)]">
-                “{vd.closing}”
+            <RevealItem index={1} revealStep={revealStep}>
+              <p className="max-w-3xl text-[1.15em] font-medium leading-snug text-[var(--text-muted)]">
+                {vd.closing}
               </p>
             </RevealItem>
           ) : null}
+          <RevealItem index={2} revealStep={revealStep}>
+            <p className="slide-kicker">{strings.questions}</p>
+          </RevealItem>
           {vd.questions?.length ? (
-            <ul className="mt-2 space-y-1.5 text-start text-sm font-medium md:text-base">
+            <ul className="mx-auto mt-1 max-w-2xl space-y-2.5 text-start">
               {vd.questions.map((q, i) => (
-                <RevealItem key={q} index={i + 2} revealStep={revealStep}>
-                  <li>• {q}</li>
+                <RevealItem key={q} index={i + 3} revealStep={revealStep}>
+                  <li className="flex gap-3 text-[1.05em] font-semibold leading-snug text-[var(--slide-title)]">
+                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--brand-cyan)]" />
+                    <span className="min-w-0">{q}</span>
+                  </li>
                 </RevealItem>
               ))}
             </ul>
@@ -461,9 +487,7 @@ function VisualBlock({
               index={vd.table.rows.length}
               revealStep={revealStep}
             >
-              <div className="shrink-0 rounded-md border-s-4 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/10 px-3 py-2 text-sm font-semibold md:text-base">
-                {vd.callout}
-              </div>
+              <KeyInsight>{vd.callout}</KeyInsight>
             </RevealItem>
           ) : null}
         </div>
@@ -506,9 +530,7 @@ function VisualBlock({
               }
               revealStep={revealStep}
             >
-              <div className="mt-auto shrink-0 rounded-md border-s-4 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/10 px-3 py-2 text-[0.95em] font-semibold leading-snug">
-                {vd.callout}
-              </div>
+              <KeyInsight className="mt-auto shrink-0">{vd.callout}</KeyInsight>
             </RevealItem>
           ) : null}
         </div>
@@ -530,11 +552,20 @@ function VisualBlock({
 
     case "overviewGrid":
       return (
-        <div className="flex h-full flex-col justify-center">
+        <div className="flex h-full min-h-0 w-full flex-col gap-2">
           <OverviewGrid
             items={vd.items ?? slide.content.map((c) => ({ title: c }))}
             revealStep={revealStep}
+            fill
           />
+          {vd.callout ? (
+            <RevealItem
+              index={vd.items?.length ?? slide.content.length}
+              revealStep={revealStep}
+            >
+              <KeyInsight className="shrink-0">{vd.callout}</KeyInsight>
+            </RevealItem>
+          ) : null}
         </div>
       );
 
@@ -555,9 +586,7 @@ function VisualBlock({
           )}
           {vd.callout ? (
             <RevealItem index={6} revealStep={revealStep}>
-              <div className="rounded-md border-s-4 border-[var(--oral-coral)] bg-[var(--oral-coral)]/10 px-3 py-2.5 text-sm font-semibold md:text-base">
-                {vd.callout}
-              </div>
+              <KeyInsight>{vd.callout}</KeyInsight>
             </RevealItem>
           ) : null}
           <div className="flex justify-center">
@@ -578,9 +607,7 @@ function VisualBlock({
             />
           ) : null}
           {vd.callout ? (
-            <div className="rounded-md border-s-4 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/10 px-3 py-2 text-[0.95em] font-semibold leading-snug">
-              {vd.callout}
-            </div>
+            <KeyInsight>{vd.callout}</KeyInsight>
           ) : null}
         </div>
       );
@@ -588,35 +615,23 @@ function VisualBlock({
     case "lifecycle":
       return (
         <div className="flex h-full min-h-0 w-full flex-col gap-3">
-          {vd.items?.length ? (
-            <SlideFlow
-              revealStep={revealStep}
-              items={vd.items.map((item) => ({
-                title: item.title,
-                body: item.body,
-              }))}
-            />
-          ) : vd.layers?.length ? (
-            <SlideFlow layers={vd.layers} revealStep={revealStep} />
-          ) : vd.flow ? (
-            <ProcessFlow flow={vd.flow} revealStep={revealStep} />
-          ) : null}
-          {slide.content.length ? (
-            <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-              {slide.content.map((item, i) => (
-                <RevealItem key={item} index={i + (vd.items?.length ?? 0)} revealStep={revealStep}>
-                  <li className="flex gap-2 text-[0.9em] font-medium leading-snug">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand-cyan)]" />
-                    <span className="min-w-0">{item}</span>
-                  </li>
-                </RevealItem>
-              ))}
-            </ul>
-          ) : null}
+          <div className="min-h-0 flex-1">
+            {vd.items?.length ? (
+              <SlideFlow
+                revealStep={revealStep}
+                items={vd.items.map((item) => ({
+                  title: item.title,
+                  body: item.body,
+                }))}
+              />
+            ) : vd.layers?.length ? (
+              <SlideFlow layers={vd.layers} revealStep={revealStep} />
+            ) : vd.flow ? (
+              <ProcessFlow flow={vd.flow} revealStep={revealStep} />
+            ) : null}
+          </div>
           {vd.callout ? (
-            <div className="mt-auto shrink-0 rounded-md border-s-4 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/10 px-3 py-2 text-[0.95em] font-semibold leading-snug">
-              {vd.callout}
-            </div>
+            <KeyInsight className="shrink-0">{vd.callout}</KeyInsight>
           ) : null}
         </div>
       );
@@ -628,7 +643,6 @@ function VisualBlock({
             <OverviewGrid
               items={vd.items}
               revealStep={revealStep}
-              compact
               fill
             />
           ) : null}
@@ -636,20 +650,26 @@ function VisualBlock({
             <ProcessFlow flow={vd.flow} revealStep={revealStep} />
           ) : null}
           {vd.callout ? (
-            <div className="shrink-0 rounded-md border-s-4 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/10 px-3 py-2 text-[0.85em] font-semibold leading-snug">
-              {vd.callout}
-            </div>
+            <KeyInsight className="shrink-0">{vd.callout}</KeyInsight>
           ) : null}
         </div>
       );
 
     case "hierarchy":
       return (
-        <div className="flex h-full flex-col justify-center">
+        <div className="flex h-full flex-col justify-center gap-2">
           <HierarchyLayers
             layers={vd.layers ?? slide.content}
             revealStep={revealStep}
           />
+          {vd.callout ? (
+            <RevealItem
+              index={(vd.layers ?? slide.content).length}
+              revealStep={revealStep}
+            >
+              <KeyInsight className="shrink-0">{vd.callout}</KeyInsight>
+            </RevealItem>
+          ) : null}
         </div>
       );
 
@@ -742,9 +762,7 @@ function VisualBlock({
           <BulletList items={slide.content} revealStep={revealStep} />
           {vd.callout ? (
             <RevealItem index={slide.content.length} revealStep={revealStep}>
-              <div className="rounded-md border-s-4 border-[var(--oral-coral)] bg-[var(--oral-coral)]/10 px-3.5 py-2.5 text-[1.05em] font-semibold leading-snug">
-                {vd.callout}
-              </div>
+              <KeyInsight>{vd.callout}</KeyInsight>
             </RevealItem>
           ) : null}
         </div>
@@ -762,9 +780,7 @@ function VisualBlock({
             <ProcessFlow flow={vd.flow} revealStep={revealStep} />
           ) : null}
           {vd.callout ? (
-            <div className="rounded-md border-s-4 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/10 px-3.5 py-2.5 text-[1.05em] font-semibold leading-snug">
-              {vd.callout}
-            </div>
+            <KeyInsight>{vd.callout}</KeyInsight>
           ) : null}
         </div>
       );
@@ -791,14 +807,15 @@ export function SlideRenderer({
       slide.visualType === "riskMatrix" ||
       slide.visualType === "responsibilityMatrix" ||
       slide.visualType === "roadmap" ||
-      slide.visualType === "overviewGrid" ||
       slide.visualType === "hierarchy" ||
       slide.visualType === "taxonomy" ||
       slide.visualType === "comparisonTable" ||
+      slide.visualType === "overviewGrid" ||
       slide.visualType === "relationship" ||
       slide.visualType === "lifecycle" ||
       slide.visualType === "processSteps" ||
-      slide.visualType === "flow",
+      slide.visualType === "flow" ||
+      slide.visualType === "decisionTree",
     [slide.visualType],
   );
 
@@ -807,7 +824,7 @@ export function SlideRenderer({
   return (
     <article
       className={`slide-stage relative flex h-full w-full flex-col overflow-hidden rounded-xl px-6 pb-3 ${
-        compact ? "pt-4" : isSpecial ? "pt-5" : "pt-14"
+        compact ? "pt-4" : isSpecial ? "pt-5" : "pt-12"
       }`}
       data-slide-id={slide.id}
       style={{ width: "var(--slide-w)", height: "var(--slide-h)" }}
@@ -815,21 +832,11 @@ export function SlideRenderer({
       {!isSpecial ? <SlideChrome slide={slide} /> : null}
 
       {!isSpecial ? (
-        <header className="mb-2 shrink-0 text-start">
-          <h2 className="text-[1.4em] font-bold leading-tight tracking-tight">
-            {slide.title}
-          </h2>
-          {slide.keyMessage ? (
-            <div className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2">
-              <p className="text-[0.7em] font-bold uppercase tracking-wide text-[var(--brand-cyan-dark)]">
-                {strings.keyMessage}
-              </p>
-              <p className="mt-0.5 text-[0.95em] font-medium leading-snug text-[var(--text-muted)]">
-                {slide.keyMessage}
-              </p>
-            </div>
-          ) : null}
-        </header>
+        <SlideHeader
+          title={slide.title}
+          keyMessage={slide.keyMessage}
+          keyMessageLabel={strings.keyMessage}
+        />
       ) : null}
 
       {isSpecial ? (

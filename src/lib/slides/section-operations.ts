@@ -5,25 +5,22 @@ export const operationsSlides = [
     id: "s08-nine-chapters-map",
     section: "operations",
     title: "Map of the Nine EU GMP Chapters — Part I",
+    keyMessage:
+      "Nine basic-requirement chapters; annexes provide complementary requirements.",
     content: [],
-    visualType: "comparisonTable",
+    visualType: "overviewGrid",
     visualData: {
-      table: {
-        headers: ["Chapter", "Title"],
-        rows: [
-          ["1", "Pharmaceutical Quality System"],
-          ["2", "Personnel"],
-          ["3", "Premises and Equipment"],
-          ["4", "Documentation"],
-          ["5", "Production"],
-          ["6", "Quality Control"],
-          ["7", "Outsourced Activities"],
-          ["8", "Complaints, Quality Defects and Product Recalls"],
-          ["9", "Self Inspection"],
-        ],
-        caption:
-          "These are the nine basic-requirement chapters; annexes provide related complementary requirements.",
-      },
+      items: [
+        { title: "Ch.1 PQS", body: "Pharmaceutical Quality System" },
+        { title: "Ch.2 Personnel", body: "Competence and organisation" },
+        { title: "Ch.3 Premises", body: "Premises and equipment" },
+        { title: "Ch.4 Documentation", body: "Instructions and records" },
+        { title: "Ch.5 Production", body: "Controlled operations" },
+        { title: "Ch.6 QC", body: "Quality Control" },
+        { title: "Ch.7 Outsourced", body: "Outsourced activities" },
+        { title: "Ch.8 Complaints", body: "Defects and recalls" },
+        { title: "Ch.9 Self-inspection", body: "Internal verification" },
+      ],
     },
     references: ["R1"],
     speakerNotes: "Reference: EudraLex Volume 4, Part I.",
@@ -33,19 +30,38 @@ export const operationsSlides = [
     id: "s09-ch1-pqs",
     section: "operations",
     title: "Chapter 1: Pharmaceutical Quality System",
-    keyMessage: "The system must provide assurance that:",
-    content: [
-      "The product is manufactured suitably for its intended use.",
-      "Marketing authorisation and applicable regulatory requirements are met.",
-      "Processes are defined and under control.",
-      "Deviations are investigated and appropriate actions are taken.",
-      "Changes are evaluated and approved before implementation.",
-      "Product quality and system effectiveness are reviewed.",
-    ],
-    visualType: "callout",
+    keyMessage: "The system must provide assurance across manufacture and control.",
+    content: [],
+    visualType: "overviewGrid",
     visualData: {
+      items: [
+        {
+          title: "Intended use",
+          body: "Product manufactured suitably for its intended use.",
+        },
+        {
+          title: "Regulatory fit",
+          body: "Marketing authorisation and applicable requirements met.",
+        },
+        {
+          title: "Process control",
+          body: "Processes defined and under control.",
+        },
+        {
+          title: "Deviations",
+          body: "Investigated with appropriate actions.",
+        },
+        {
+          title: "Changes",
+          body: "Evaluated and approved before implementation.",
+        },
+        {
+          title: "Review",
+          body: "Product quality and system effectiveness reviewed.",
+        },
+      ],
       callout:
-        "Example: Product Quality Review (PQR) to examine trends, process consistency, and improvement needs.",
+        "Example: Product Quality Review (PQR) examines trends, process consistency, and improvement needs.",
     },
     references: ["R1"],
     speakerNotes: "Reference: EU GMP, Chapter 1.",
@@ -57,27 +73,32 @@ export const operationsSlides = [
     title: "Chapter 2: Personnel",
     keyMessage:
       "Attending training alone does not prove competence to perform the work.",
-    content: [
-      "Sufficient numbers of competent personnel.",
-      "Clear organisational structure and job descriptions.",
-      "Independence of production and quality-control responsibilities from each other.",
-      "Initial and ongoing training appropriate to the role.",
-      "Assessment of the practical effectiveness of training.",
-      "Personal hygiene, gowning, and entry requirements observed.",
-    ],
-    visualType: "callout",
+    content: [],
+    visualType: "splitPathways",
     visualData: {
-      callout:
-        "Attending training alone does not prove competence to perform the work.",
+      leftTitle: "Organisation requirements",
+      rightTitle: "Competence proof",
+      leftSteps: [
+        "Sufficient competent personnel",
+        "Clear structure and job descriptions",
+        "Independence of production and QC roles",
+      ],
+      rightSteps: [
+        "Role-appropriate initial and ongoing training",
+        "Assessment of training effectiveness",
+        "Hygiene, gowning, and entry rules observed",
+      ],
+      shared: ["Competence is demonstrated, not assumed"],
     },
     references: ["R1"],
     speakerNotes: "Reference: EU GMP, Chapter 2.",
-    revealSteps: 7,
+    revealSteps: 4,
   }),
   slide(11, {
     id: "s11-ch3-premises",
     section: "operations",
     title: "Chapter 3: Premises and Equipment",
+    keyMessage: "Design, status control, and maintenance protect product quality.",
     content: [
       "Design and layout suited to the operations.",
       "Reduced likelihood of error, contamination, and cross-contamination.",
@@ -85,14 +106,26 @@ export const operationsSlides = [
       "Appropriate environmental conditions.",
       "Control of equipment status and measuring instruments.",
     ],
-    visualType: "callout",
+    visualType: "relationship",
     visualData: {
-      callout:
-        "Distinct concepts — Qualification: confirm suitability and correct performance. Calibration: relate an instrument reading to a reference. Preventive Maintenance: planned maintenance to reduce failures.",
+      items: [
+        {
+          title: "Qualification",
+          body: "Confirm suitability and correct performance.",
+        },
+        {
+          title: "Calibration",
+          body: "Relate an instrument reading to a reference.",
+        },
+        {
+          title: "Preventive maintenance",
+          body: "Planned maintenance to reduce failures.",
+        },
+      ],
     },
     references: ["R1", "R6"],
     speakerNotes: "Reference: EU GMP Chapter 3; Annex 15.",
-    revealSteps: 6,
+    revealSteps: 5,
   }),
   slide(12, {
     id: "s12-ch4-documentation",
@@ -100,11 +133,7 @@ export const operationsSlides = [
     title: "Chapter 4: Documentation",
     keyMessage:
       "Instructions say what should be done; records show what was done.",
-    content: [
-      "Instructions: specifications; manufacturing and packaging instructions; SOPs and protocols.",
-      "Records / reports: batch and equipment records; test results; investigation and validation reports.",
-      "Requirements: approval, version control, contemporaneous recording, traceability, and appropriate retention.",
-    ],
+    content: [],
     visualType: "splitPathways",
     visualData: {
       leftTitle: "Instructions",
@@ -119,9 +148,9 @@ export const operationsSlides = [
         "Test results",
         "Investigation & validation reports",
       ],
-      shared: ["Approval · Version control · Contemporaneous recording · Traceability"],
-      callout:
-        "Instructions say what should be done; records show what was done.",
+      shared: [
+        "Approval · Version control · Contemporaneous recording · Traceability",
+      ],
     },
     references: ["R1"],
     speakerNotes: "Reference: EU GMP, Chapter 4.",
@@ -131,7 +160,8 @@ export const operationsSlides = [
     id: "s13-data-integrity",
     section: "operations",
     title: "Data Integrity — ALCOA+",
-    keyMessage: "ALCOA+: attributable, legible, contemporaneous, original, accurate — plus complete, consistent, enduring, available.",
+    keyMessage:
+      "ALCOA+: attributable, legible, contemporaneous, original, accurate — plus complete, consistent, enduring, available.",
     content: [],
     visualType: "relationship",
     visualData: {
@@ -148,22 +178,34 @@ export const operationsSlides = [
     references: ["R1", "R5", "R8"],
     speakerNotes:
       "Reference: EU GMP Chapter 4 and Annex 11; PIC/S PI 041.",
-    revealSteps: 7,
+    revealSteps: 6,
   }),
   slide(14, {
     id: "s14-ch5-production",
     section: "operations",
     title: "Chapter 5: Production",
-    content: [
-      "Use materials with defined identity and status.",
-      "Perform operations according to approved instructions.",
-      "Control contamination and cross-contamination based on risk.",
-      "Record parameters and in-process controls.",
-      "Review yields and reconcile quantities as required.",
-      "Control packaging and prevent mix-ups.",
-    ],
-    visualType: "callout",
+    keyMessage: "Controlled operations prevent mix-ups and contamination.",
+    content: [],
+    visualType: "processSteps",
     visualData: {
+      flow: {
+        title: "Production control points",
+        nodes: [
+          { id: "m", label: "Materials & status" },
+          { id: "i", label: "Approved instructions" },
+          { id: "c", label: "Contamination control" },
+          { id: "p", label: "IPC & parameters" },
+          { id: "y", label: "Yield & reconcile" },
+          { id: "k", label: "Packaging control" },
+        ],
+        edges: [
+          { from: "m", to: "i" },
+          { from: "i", to: "c" },
+          { from: "c", to: "p" },
+          { from: "p", to: "y" },
+          { from: "y", to: "k" },
+        ],
+      },
       callout:
         "Example: an unexplained discrepancy in label counts can signal mix-up or mislabelling risk.",
     },
@@ -176,22 +218,40 @@ export const operationsSlides = [
     section: "operations",
     title: "Identification & Status Labelling",
     keyMessage: "Unclear identity or status is not permission to use.",
-    content: [
-      "Materials, containers, and products in process must be identifiable.",
-      "Necessary information such as name or code and batch number should appear as appropriate to the stage.",
-      "Status must be clear: quarantine, released, or rejected.",
-      "Equipment and its status should be identified where needed.",
-      "Information must be legible, clear, and free of contradiction.",
-      "Relabelling must be controlled and preserve traceability.",
-    ],
-    visualType: "callout",
+    content: [],
+    visualType: "overviewGrid",
     visualData: {
-      callout: "Unclear identity or status is not permission to use.",
+      items: [
+        {
+          title: "Identifiable",
+          body: "Materials, containers, and in-process products must be identifiable.",
+        },
+        {
+          title: "Batch context",
+          body: "Name or code and batch number as appropriate to the stage.",
+        },
+        {
+          title: "Clear status",
+          body: "Quarantine, released, or rejected must be unambiguous.",
+        },
+        {
+          title: "Equipment",
+          body: "Equipment and its status identified where needed.",
+        },
+        {
+          title: "Legibility",
+          body: "Information legible, clear, and free of contradiction.",
+        },
+        {
+          title: "Relabelling",
+          body: "Controlled, with preserved traceability.",
+        },
+      ],
     },
     references: ["R1"],
     speakerNotes:
       "Colour alone is not enough; there is no single global colour scheme for all organisations. In some cases, validated electronic control can reduce the need for physical labels if related requirements and control effectiveness are met. Reference: EU GMP Chapter 5; Chapter 3 for equipment.",
-    revealSteps: 7,
+    revealSteps: 6,
   }),
   slide(16, {
     id: "s16-label-control",
@@ -223,17 +283,18 @@ export const operationsSlides = [
           { from: "e", to: "f" },
         ],
       },
-      callout: "A correct label on the wrong product is also dangerous.",
     },
     references: ["R1"],
     speakerNotes:
       "Verify variable data such as batch number and expiry as required. Significant or unusual reconciliation discrepancies must be investigated and acceptably justified before release. Remaining items with batch-specific information are destroyed per requirements with destruction recorded. Return of items without batch data to stores must follow the approved procedure. Legal label content also depends on approved product text and destination-market rules; Chapter 5 alone does not cover all of this. Reference: EU GMP Chapter 5 Packaging Materials / Packaging Operations; Chapter 4 for document control.",
-    revealSteps: 7,
+    revealSteps: 6,
   }),
   slide(17, {
     id: "s17-ch6-qc",
     section: "operations",
     title: "Chapter 6: Quality Control",
+    keyMessage:
+      "In the EU, batch certification by a QP is not the same as performing tests or QC approval alone.",
     content: [
       "Sampling and specifications.",
       "Test methods and recording of results.",
@@ -242,10 +303,21 @@ export const operationsSlides = [
       "Participation in quality decisions.",
       "Prevent use or supply before required evaluations and approvals are complete.",
     ],
-    visualType: "callout",
+    visualType: "comparisonTable",
     visualData: {
+      table: {
+        headers: ["QC activity", "What it assures"],
+        rows: [
+          ["Sampling & specifications", "Defined attributes are tested against approved criteria"],
+          ["Methods & results", "Reliable execution and recorded evidence"],
+          ["OOS / unexpected results", "Investigation before disposition"],
+          ["Stability programme", "Ongoing product quality over shelf life"],
+          ["Quality decisions", "QC participation in release-related judgements"],
+          ["Hold until approved", "No use or supply before required approvals"],
+        ],
+      },
       callout:
-        "Important distinction: in the EU, batch certification by a QP is not the same as performing tests or QC approval alone.",
+        "Important distinction: QP batch certification is not the same as performing tests or QC approval alone.",
     },
     references: ["R1", "R7"],
     speakerNotes: "Reference: EU GMP Chapter 6; Annex 16.",
@@ -257,18 +329,29 @@ export const operationsSlides = [
     title: "Chapter 7: Outsourced Activities",
     keyMessage:
       "Outsourcing an activity does not remove responsibility for overseeing its quality.",
-    content: [
-      "Clearly define the scope of the activity.",
-      "Assess contractor competence and capability.",
-      "Written contract defining responsibilities.",
-      "Information exchange and access to records.",
-      "Performance monitoring and periodic review.",
-      "Control of changes and further subcontracting.",
-    ],
-    visualType: "callout",
+    content: [],
+    visualType: "processSteps",
     visualData: {
+      flow: {
+        title: "Oversight cycle",
+        nodes: [
+          { id: "s", label: "Define scope" },
+          { id: "a", label: "Assess capability" },
+          { id: "c", label: "Contract" },
+          { id: "e", label: "Exchange info" },
+          { id: "m", label: "Monitor" },
+          { id: "ch", label: "Control changes" },
+        ],
+        edges: [
+          { from: "s", to: "a" },
+          { from: "a", to: "c" },
+          { from: "c", to: "e" },
+          { from: "e", to: "m" },
+          { from: "m", to: "ch" },
+        ],
+      },
       callout:
-        "Examples: contract manufacture or testing, and printing of related packaging materials. Outsourcing an activity does not remove responsibility for overseeing its quality.",
+        "Examples: contract manufacture or testing, and printing of related packaging materials.",
     },
     references: ["R1"],
     speakerNotes: "Reference: EU GMP, Chapter 7.",
@@ -280,18 +363,29 @@ export const operationsSlides = [
     title: "Chapter 8: Complaints, Quality Defects and Product Recalls",
     keyMessage:
       "Not every complaint is a quality defect; every complaint still needs appropriate evaluation.",
-    content: [
-      "Record and evaluate complaints or quality-defect information.",
-      "Risk- and evidence-based investigation.",
-      "Assess possible involvement of other batches or products.",
-      "Determine cause and appropriate actions.",
-      "Notify competent authorities where required.",
-      "Recall readiness and evaluation of recall arrangements’ effectiveness.",
-    ],
-    visualType: "callout",
+    content: [],
+    visualType: "processSteps",
     visualData: {
+      flow: {
+        title: "Complaint to action",
+        nodes: [
+          { id: "r", label: "Record" },
+          { id: "e", label: "Evaluate" },
+          { id: "i", label: "Investigate" },
+          { id: "b", label: "Batch impact" },
+          { id: "a", label: "Actions" },
+          { id: "n", label: "Notify / recall" },
+        ],
+        edges: [
+          { from: "r", to: "e" },
+          { from: "e", to: "i" },
+          { from: "i", to: "b" },
+          { from: "b", to: "a" },
+          { from: "a", to: "n" },
+        ],
+      },
       callout:
-        "Not every complaint is a quality defect; every complaint still needs appropriate evaluation.",
+        "Maintain recall readiness and evaluate the effectiveness of recall arrangements.",
     },
     references: ["R1"],
     speakerNotes: "Reference: EU GMP, Chapter 8.",
@@ -303,17 +397,27 @@ export const operationsSlides = [
     title: "Chapter 9: Self Inspection",
     keyMessage:
       "An effective outcome is not only a report; it is demonstrable system correction.",
-    content: [
-      "A programme covering GMP-related activities.",
-      "Competent persons with appropriate independence.",
-      "Document observations and findings.",
-      "Define action, owner, and due date.",
-      "Follow up implementation of actions.",
-    ],
-    visualType: "callout",
+    content: [],
+    visualType: "processSteps",
     visualData: {
+      flow: {
+        title: "Self-inspection loop",
+        nodes: [
+          { id: "p", label: "Programme" },
+          { id: "c", label: "Competent auditors" },
+          { id: "f", label: "Findings" },
+          { id: "a", label: "Actions" },
+          { id: "u", label: "Follow-up" },
+        ],
+        edges: [
+          { from: "p", to: "c" },
+          { from: "c", to: "f" },
+          { from: "f", to: "a" },
+          { from: "a", to: "u" },
+        ],
+      },
       callout:
-        "Example areas: personnel, documentation, production, QC, equipment, distribution, and recall. An effective outcome is not only a report; it is demonstrable system correction.",
+        "Example areas: personnel, documentation, production, QC, equipment, distribution, and recall.",
     },
     references: ["R1"],
     speakerNotes: "Reference: EU GMP, Chapter 9.",
