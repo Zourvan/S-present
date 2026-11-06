@@ -299,6 +299,7 @@ html[lang="fa"] .slide-stage {
 }
 
 .slide-flow-canvas .slide-flow-handle {
+  /* 1px ports at the card edge; edge paths use layout math, not handle size. */
   width: 1px !important;
   height: 1px !important;
   min-width: 0 !important;

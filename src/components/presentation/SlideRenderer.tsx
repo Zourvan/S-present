@@ -1,6 +1,13 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import {
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 import type { Locale, Slide } from "@/lib/types";
 import { TOTAL_SLIDES } from "@/lib/slides";
 import { formatSystemDate } from "@/lib/system-date";
@@ -25,12 +32,14 @@ import {
   ResponsibilityMatrix,
   DecisionTree,
 } from "@/components/visuals/Diagrams";
-import { SlideFlow } from "@/components/visuals/flow/SlideFlow";
 import { DeviationVisual } from "@/components/visuals/DeviationVisuals";
+import { SlideFlow } from "@/components/visuals/flow/SlideFlow";
 import { toLocaleDigits } from "@/lib/i18n/digits";
 
 const CITATION_PREVIEW = 2;
 const LIBRARY_PREVIEW = 6;
+/** Grow ceiling so sparse slides fill the frame without looking sparse. */
+const FIT_SCALE_MAX = 1.55;
 
 function useSystemDate(locale: Locale): string {
   return useSyncExternalStore(
@@ -50,16 +59,90 @@ function BulletList({
   startIndex?: number;
 }) {
   return (
-    <ul className="min-h-0 space-y-1.5 overflow-y-auto pe-1 sm:space-y-2">
+    <ul className="space-y-2.5 pe-1 sm:space-y-3">
       {items.map((item, i) => (
         <RevealItem key={item} index={startIndex + i} revealStep={revealStep}>
-          <li className="flex gap-2 text-[1em] font-medium leading-snug sm:gap-2.5 sm:text-[1.05em]">
-            <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--brand-cyan)]" />
+          <li className="flex gap-3 text-[1.15em] font-semibold leading-snug sm:text-[1.2em]">
+            <span className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-[var(--brand-cyan)]" />
             <span className="min-w-0">{item}</span>
           </li>
         </RevealItem>
       ))}
     </ul>
+  );
+}
+
+/**
+ * Fits body content to the slide frame: grows sparse slides, shrinks dense ones,
+ * top-aligned, never scrolls inside the canvas.
+ */
+function SlideBodyFit({
+  fitKey,
+  children,
+}: {
+  fitKey: string;
+  children: ReactNode;
+}) {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useLayoutEffect(() => {
+    const outer = outerRef.current;
+    const inner = innerRef.current;
+    if (!outer || !inner) return;
+
+    let frame = 0;
+    const measure = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const available = outer.clientHeight;
+        const zoomNow = Number.parseFloat(inner.style.zoom || "1") || 1;
+        // zoom changes reported scrollHeight — recover natural size
+        const needed = inner.scrollHeight / zoomNow;
+        if (available <= 0 || needed <= 0) {
+          setScale(1);
+          return;
+        }
+        const raw = available / needed;
+        // Grow up to MAX; when shrinking, allow below FIT_SCALE_MIN so content never clips.
+        const next =
+          raw >= 1
+            ? Math.min(FIT_SCALE_MAX, raw)
+            : Math.max(0.52, raw);
+        setScale((prev) => (Math.abs(prev - next) < 0.01 ? prev : next));
+      });
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(outer);
+    ro.observe(inner);
+    return () => {
+      cancelAnimationFrame(frame);
+      ro.disconnect();
+    };
+  }, [fitKey]);
+
+  useLayoutEffect(() => {
+    const inner = innerRef.current;
+    if (!inner) return;
+    inner.style.zoom = String(scale);
+  }, [scale]);
+
+  return (
+    <div
+      ref={outerRef}
+      className="relative min-h-0 w-full flex-1 overflow-hidden"
+    >
+      <div
+        ref={innerRef}
+        className="w-full"
+        data-fit-scale={scale.toFixed(3)}
+      >
+        {children}
+      </div>
+    </div>
   );
 }
 
@@ -216,7 +299,10 @@ function VisualBlock({
   const systemDate = useSystemDate(locale);
 
   switch (slide.visualType) {
-    case "titleHero":
+    case "titleHero": {
+      const hasPathways =
+        (vd.leftSteps?.length ?? 0) > 0 || (vd.rightSteps?.length ?? 0) > 0;
+      const supporting = vd.supporting ?? slide.content;
       return (
         <div className="flex h-full flex-col justify-center gap-2.5">
           <RevealItem index={0} revealStep={revealStep}>
@@ -232,29 +318,48 @@ function VisualBlock({
               <p className="mx-auto mt-1 max-w-3xl text-[0.95em] font-medium leading-snug text-[var(--text-muted)]">
                 {vd.subtitle ?? slide.keyMessage}
               </p>
+              {vd.presenter ? (
+                <p className="mt-1.5 text-sm font-medium text-[var(--text-muted)]">
+                  {vd.presenter.name}
+                  {vd.presenter.role ? ` · ${vd.presenter.role}` : ""}
+                </p>
+              ) : null}
               <p className="mt-1.5 text-base font-semibold text-[var(--brand-cyan)]">
                 {systemDate ? `${systemDate} · ${brandName}` : brandName}
               </p>
             </div>
           </RevealItem>
-          <RevealItem index={1} revealStep={revealStep}>
-            <div className="flex justify-center">
-              <PathwayLegend />
-            </div>
-          </RevealItem>
-          <RevealItem index={2} revealStep={revealStep}>
-            <SplitPathways
-              leftTitle={vd.leftTitle}
-              rightTitle={vd.rightTitle}
-              leftSteps={vd.leftSteps}
-              rightSteps={vd.rightSteps}
-              shared={vd.shared}
-              revealStep={Math.max(revealStep, 3)}
-              compact
-            />
-          </RevealItem>
+          {hasPathways ? (
+            <>
+              <RevealItem index={1} revealStep={revealStep}>
+                <div className="flex justify-center">
+                  <PathwayLegend />
+                </div>
+              </RevealItem>
+              <RevealItem index={2} revealStep={revealStep}>
+                <SplitPathways
+                  leftTitle={vd.leftTitle}
+                  rightTitle={vd.rightTitle}
+                  leftSteps={vd.leftSteps}
+                  rightSteps={vd.rightSteps}
+                  shared={vd.shared}
+                  revealStep={Math.max(revealStep, 3)}
+                  compact
+                />
+              </RevealItem>
+            </>
+          ) : supporting.length ? (
+            <RevealItem index={1} revealStep={revealStep}>
+              <ul className="mx-auto mt-1 max-w-2xl space-y-1.5 text-center text-[0.95em] font-medium text-[var(--text-ink)]">
+                {supporting.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </RevealItem>
+          ) : null}
         </div>
       );
+    }
 
     case "presenter": {
       const p = vd.presenter;
@@ -315,7 +420,7 @@ function VisualBlock({
 
     case "references":
       return (
-        <div className="flex h-full flex-col justify-center gap-3">
+        <div className="flex w-full flex-col justify-center gap-2.5">
           {vd.takeaways?.length ? (
             <div>
               <p className="mb-1 text-sm font-bold uppercase text-[var(--brand-cyan-dark)]">
@@ -345,28 +450,73 @@ function VisualBlock({
 
     case "comparisonTable":
       return vd.table ? (
-        <div className="flex h-full flex-col justify-center">
-          <ComparisonTable table={vd.table} revealStep={revealStep} />
+        <div className="flex h-full min-h-0 w-full flex-col gap-2">
+          <ComparisonTable
+            table={vd.table}
+            revealStep={revealStep}
+            fill
+          />
+          {vd.callout ? (
+            <RevealItem
+              index={vd.table.rows.length}
+              revealStep={revealStep}
+            >
+              <div className="shrink-0 rounded-md border-s-4 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/10 px-3 py-2 text-sm font-semibold md:text-base">
+                {vd.callout}
+              </div>
+            </RevealItem>
+          ) : null}
         </div>
       ) : null;
 
     case "flow":
     case "processSteps":
       return (
-        <div className="flex h-full flex-col justify-center">
+        <div className="flex h-full min-h-0 w-full flex-col gap-3">
           {vd.flow ? (
-            <ProcessFlow flow={vd.flow} revealStep={revealStep} />
+            <div className="shrink-0">
+              <ProcessFlow flow={vd.flow} revealStep={revealStep} />
+            </div>
           ) : vd.items ? (
             <OverviewGrid items={vd.items} revealStep={revealStep} />
           ) : (
             <BulletList items={slide.content} revealStep={revealStep} />
           )}
+          {slide.content.length && vd.flow ? (
+            <ul className="grid min-h-0 grid-cols-1 gap-1.5 sm:grid-cols-2">
+              {slide.content.map((item, i) => (
+                <RevealItem
+                  key={item}
+                  index={vd.flow!.nodes.length + i}
+                  revealStep={revealStep}
+                >
+                  <li className="flex gap-2 text-[0.9em] font-medium leading-snug">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand-cyan)]" />
+                    <span className="min-w-0">{item}</span>
+                  </li>
+                </RevealItem>
+              ))}
+            </ul>
+          ) : null}
+          {vd.callout ? (
+            <RevealItem
+              index={
+                (vd.flow?.nodes.length ?? 0) +
+                (vd.flow && slide.content.length ? slide.content.length : 0)
+              }
+              revealStep={revealStep}
+            >
+              <div className="mt-auto shrink-0 rounded-md border-s-4 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/10 px-3 py-2 text-[0.95em] font-semibold leading-snug">
+                {vd.callout}
+              </div>
+            </RevealItem>
+          ) : null}
         </div>
       );
 
     case "splitPathways":
       return (
-        <div className="flex h-full flex-col justify-center">
+        <div className="flex w-full flex-col justify-center">
           <SplitPathways
             leftTitle={vd.leftTitle}
             rightTitle={vd.rightTitle}
@@ -417,35 +567,76 @@ function VisualBlock({
       );
 
     case "cycle":
-    case "lifecycle":
-    case "relationship":
       return (
-        <div className="flex h-full flex-col justify-center gap-3">
+        <div className="flex w-full flex-col gap-2.5">
           {vd.layers?.length ? (
             <CycleDiagram layers={vd.layers} revealStep={revealStep} />
-          ) : slide.visualType === "cycle" && vd.items?.length && !vd.flow ? (
+          ) : vd.items?.length ? (
             <CycleDiagram
               layers={vd.items.map((item) => item.title)}
               revealStep={revealStep}
             />
-          ) : slide.visualType === "lifecycle" &&
-            vd.items?.length &&
-            !vd.flow ? (
-            <SlideFlow
-              layers={vd.items.map((item) => item.title)}
-              revealStep={revealStep}
-            />
           ) : null}
-          {vd.items &&
-          slide.visualType !== "cycle" &&
-          slide.visualType !== "lifecycle" ? (
-            <OverviewGrid items={vd.items} revealStep={revealStep} />
+          {vd.callout ? (
+            <div className="rounded-md border-s-4 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/10 px-3 py-2 text-[0.95em] font-semibold leading-snug">
+              {vd.callout}
+            </div>
+          ) : null}
+        </div>
+      );
+
+    case "lifecycle":
+      return (
+        <div className="flex h-full min-h-0 w-full flex-col gap-3">
+          {vd.items?.length ? (
+            <SlideFlow
+              revealStep={revealStep}
+              items={vd.items.map((item) => ({
+                title: item.title,
+                body: item.body,
+              }))}
+            />
+          ) : vd.layers?.length ? (
+            <SlideFlow layers={vd.layers} revealStep={revealStep} />
+          ) : vd.flow ? (
+            <ProcessFlow flow={vd.flow} revealStep={revealStep} />
+          ) : null}
+          {slide.content.length ? (
+            <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+              {slide.content.map((item, i) => (
+                <RevealItem key={item} index={i + (vd.items?.length ?? 0)} revealStep={revealStep}>
+                  <li className="flex gap-2 text-[0.9em] font-medium leading-snug">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--brand-cyan)]" />
+                    <span className="min-w-0">{item}</span>
+                  </li>
+                </RevealItem>
+              ))}
+            </ul>
+          ) : null}
+          {vd.callout ? (
+            <div className="mt-auto shrink-0 rounded-md border-s-4 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/10 px-3 py-2 text-[0.95em] font-semibold leading-snug">
+              {vd.callout}
+            </div>
+          ) : null}
+        </div>
+      );
+
+    case "relationship":
+      return (
+        <div className="flex h-full min-h-0 w-full flex-col gap-2">
+          {vd.items?.length ? (
+            <OverviewGrid
+              items={vd.items}
+              revealStep={revealStep}
+              compact
+              fill
+            />
           ) : null}
           {vd.flow ? (
             <ProcessFlow flow={vd.flow} revealStep={revealStep} />
           ) : null}
           {vd.callout ? (
-            <div className="rounded-md border-s-4 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/10 px-3 py-2.5 text-sm font-semibold md:text-base">
+            <div className="shrink-0 rounded-md border-s-4 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/10 px-3 py-2 text-[0.85em] font-semibold leading-snug">
               {vd.callout}
             </div>
           ) : null}
@@ -479,7 +670,7 @@ function VisualBlock({
     case "decisionTree":
     case "investigation":
       return (
-        <div className="flex h-full flex-col justify-center">
+        <div className="flex w-full flex-col justify-center">
           <DecisionTree
             items={vd.items ?? slide.content.map((c) => ({ title: c }))}
             revealStep={revealStep}
@@ -489,7 +680,7 @@ function VisualBlock({
 
     case "monitoringChart":
       return (
-        <div className="flex h-full min-h-0 flex-col justify-center gap-2 sm:gap-3">
+        <div className="flex w-full flex-col justify-center gap-2 sm:gap-3">
           <div className="shrink-0">
             <MonitoringChart
               labels={vd.chart?.labels ?? ["W1", "W2", "W3", "W4", "W5", "W6"]}
@@ -500,20 +691,18 @@ function VisualBlock({
             />
           </div>
           {slide.content.length > 0 ? (
-            <div className="min-h-0 flex-1">
-              <BulletList
-                items={slide.content}
-                revealStep={revealStep}
-                startIndex={1}
-              />
-            </div>
+            <BulletList
+              items={slide.content}
+              revealStep={revealStep}
+              startIndex={1}
+            />
           ) : null}
         </div>
       );
 
     case "dashboard":
       return (
-        <div className="flex h-full flex-col justify-center">
+        <div className="flex w-full flex-col justify-center">
           <KpiDashboard
             kpis={vd.kpis}
             maturityLevels={vd.maturityLevels}
@@ -549,11 +738,11 @@ function VisualBlock({
 
     case "callout":
       return (
-        <div className="flex h-full flex-col justify-center gap-3">
+        <div className="flex w-full flex-col gap-4">
           <BulletList items={slide.content} revealStep={revealStep} />
           {vd.callout ? (
             <RevealItem index={slide.content.length} revealStep={revealStep}>
-              <div className="rounded-md border-s-4 border-[var(--oral-coral)] bg-[var(--oral-coral)]/10 px-3 py-2.5 text-sm font-semibold md:text-base">
+              <div className="rounded-md border-s-4 border-[var(--oral-coral)] bg-[var(--oral-coral)]/10 px-3.5 py-2.5 text-[1.05em] font-semibold leading-snug">
                 {vd.callout}
               </div>
             </RevealItem>
@@ -564,7 +753,7 @@ function VisualBlock({
     case "bullets":
     default:
       return (
-        <div className="flex h-full flex-col justify-center gap-3">
+        <div className="flex w-full flex-col gap-4">
           <BulletList items={slide.content} revealStep={revealStep} />
           {vd.table ? (
             <ComparisonTable table={vd.table} revealStep={revealStep} />
@@ -573,7 +762,7 @@ function VisualBlock({
             <ProcessFlow flow={vd.flow} revealStep={revealStep} />
           ) : null}
           {vd.callout ? (
-            <div className="rounded-md border-s-4 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/10 px-3 py-2.5 text-sm font-semibold md:text-base">
+            <div className="rounded-md border-s-4 border-[var(--brand-cyan)] bg-[var(--brand-cyan)]/10 px-3.5 py-2.5 text-[1.05em] font-semibold leading-snug">
               {vd.callout}
             </div>
           ) : null}
@@ -591,7 +780,7 @@ export function SlideRenderer({
   revealStep: number;
   compact?: boolean;
 }) {
-  const { strings } = useApp();
+  const { strings, typeScale, locale } = useApp();
   const isSpecial =
     slide.visualType === "titleHero" ||
     slide.visualType === "presenter" ||
@@ -604,9 +793,16 @@ export function SlideRenderer({
       slide.visualType === "roadmap" ||
       slide.visualType === "overviewGrid" ||
       slide.visualType === "hierarchy" ||
-      slide.visualType === "taxonomy",
+      slide.visualType === "taxonomy" ||
+      slide.visualType === "comparisonTable" ||
+      slide.visualType === "relationship" ||
+      slide.visualType === "lifecycle" ||
+      slide.visualType === "processSteps" ||
+      slide.visualType === "flow",
     [slide.visualType],
   );
+
+  const fitKey = `${slide.id}:${revealStep}:${typeScale}:${locale}:${compact ? "c" : "f"}`;
 
   return (
     <article
@@ -620,7 +816,7 @@ export function SlideRenderer({
 
       {!isSpecial ? (
         <header className="mb-2 shrink-0 text-start">
-          <h2 className="text-[1.35em] font-bold leading-tight tracking-tight">
+          <h2 className="text-[1.4em] font-bold leading-tight tracking-tight">
             {slide.title}
           </h2>
           {slide.keyMessage ? (
@@ -628,7 +824,7 @@ export function SlideRenderer({
               <p className="text-[0.7em] font-bold uppercase tracking-wide text-[var(--brand-cyan-dark)]">
                 {strings.keyMessage}
               </p>
-              <p className="mt-0.5 text-[0.9em] font-medium leading-snug text-[var(--text-muted)]">
+              <p className="mt-0.5 text-[0.95em] font-medium leading-snug text-[var(--text-muted)]">
                 {slide.keyMessage}
               </p>
             </div>
@@ -636,13 +832,19 @@ export function SlideRenderer({
         </header>
       ) : null}
 
-      <div
-        className={`min-h-0 flex-1 overflow-x-hidden overflow-y-auto ${
-          fillBody ? "flex flex-col" : ""
-        }`}
-      >
-        <VisualBlock slide={slide} revealStep={revealStep} />
-      </div>
+      {isSpecial ? (
+        <div className="min-h-0 w-full flex-1 overflow-hidden">
+          <VisualBlock slide={slide} revealStep={revealStep} />
+        </div>
+      ) : fillBody ? (
+        <div className="flex min-h-0 w-full flex-1 flex-col overflow-hidden">
+          <VisualBlock slide={slide} revealStep={revealStep} />
+        </div>
+      ) : (
+        <SlideBodyFit fitKey={fitKey}>
+          <VisualBlock slide={slide} revealStep={revealStep} />
+        </SlideBodyFit>
+      )}
 
       {!isSpecial ? <CitationFooter refs={slide.references} /> : null}
     </article>

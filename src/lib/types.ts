@@ -74,6 +74,7 @@ export interface TableData {
 export interface FlowNode {
   id: string;
   label: string;
+  body?: string;
   pathway?: "oral" | "biotech" | "shared";
 }
 

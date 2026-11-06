@@ -7,27 +7,59 @@ import { usePrefersReducedMotion } from "./Reveal";
 export function ComparisonTable({
   table,
   revealStep,
+  fill = false,
 }: {
   table: TableData;
   revealStep: number;
+  /** Stretch to parent height and size rows to fit the frame. */
+  fill?: boolean;
 }) {
   const reduce = usePrefersReducedMotion();
+  const dense = table.rows.length >= 7;
+  const colCount = Math.max(table.headers.length, 1);
+  // Narrow first column when it looks like an index / chapter column.
+  const firstNarrow =
+    colCount >= 2 &&
+    table.headers[0].length <= 12 &&
+    table.rows.every((r) => (r[0]?.length ?? 0) <= 4);
 
   return (
-    <div className="h-full max-h-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+    <div
+      className={`w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] ${
+        fill ? "flex min-h-0 h-full flex-col" : ""
+      }`}
+    >
       {table.caption ? (
-        <p className="border-b border-[var(--border)] bg-[var(--bg-cream)] px-3 py-1.5 text-sm font-semibold text-[var(--text-ink)]">
+        <p className="shrink-0 border-b border-[var(--border)] bg-[var(--bg-cream)] px-3 py-1.5 text-[0.85em] font-semibold leading-snug text-[var(--text-ink)]">
           {table.caption}
         </p>
       ) : null}
-      <div className="slide-table-wrap max-h-full">
-        <table className="w-full table-fixed border-collapse text-start">
+      <div
+        className={`slide-table-wrap min-h-0 ${fill ? "flex-1 overflow-hidden" : "max-h-full"}`}
+      >
+        <table
+          className={`w-full table-fixed border-collapse text-start ${
+            fill ? "h-full" : ""
+          }`}
+        >
+          {firstNarrow ? (
+            <colgroup>
+              <col style={{ width: colCount === 2 ? "18%" : "14%" }} />
+              {Array.from({ length: colCount - 1 }, (_, i) => (
+                <col key={i} />
+              ))}
+            </colgroup>
+          ) : null}
           <thead>
             <tr className="bg-[var(--brand-cyan)]/15">
               {table.headers.map((h) => (
                 <th
                   key={h}
-                  className="border-b-2 border-[var(--brand-cyan)]/30 px-2.5 py-2 text-[0.85em] font-bold leading-snug text-[var(--text-ink)]"
+                  className={`border-b-2 border-[var(--brand-cyan)]/30 font-bold leading-snug text-[var(--text-ink)] ${
+                    dense
+                      ? "px-2.5 py-1.5 text-[0.8em]"
+                      : "px-3 py-2 text-[0.9em]"
+                  }`}
                 >
                   {h}
                 </th>
@@ -50,9 +82,11 @@ export function ComparisonTable({
                   {row.map((cell, j) => (
                     <td
                       key={`${i}-${j}`}
-                      className={`border-b border-[var(--border)] px-2.5 py-2 align-middle text-[0.9em] leading-snug text-[var(--text-ink)] ${
-                        j === 0 ? "font-bold" : "font-semibold"
-                      }`}
+                      className={`border-b border-[var(--border)] align-middle leading-snug text-[var(--text-ink)] ${
+                        dense
+                          ? "px-2.5 py-1 text-[0.92em]"
+                          : "px-3 py-2 text-[1em]"
+                      } ${j === 0 ? "font-bold" : "font-semibold"}`}
                     >
                       {cell}
                     </td>

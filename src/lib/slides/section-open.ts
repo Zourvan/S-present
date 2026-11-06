@@ -2,56 +2,33 @@ import { slide } from "./helpers";
 
 export const openSlides = [
   slide(1, {
-    id: "s00-title",
+    id: "s01-title",
     section: "open",
-    title: "GMP in Pharmaceutical Manufacturing",
+    title: "GMP & GDP Fundamentals and Key Pharmaceutical Quality Systems",
     keyMessage:
-      "A Comprehensive Implementation Framework for Conventional Oral Medicines and Biotechnology-Derived Products",
+      "From controlled manufacture to preserving quality across the supply chain",
     content: [
-      "Regulatory compliance",
-      "Process control",
-      "Product quality",
-      "Patient safety",
-      "Sustainable GMP implementation",
+      "Based on EudraLex Volume 4 — Part I",
+      "EU GDP Guidelines",
+      "ICH Q9(R1) & ICH Q10",
+      "Presenter name | Organizational unit | Date",
     ],
     visualType: "titleHero",
     visualData: {
       subtitle:
-        "A Comprehensive Implementation Framework for Conventional Oral Medicines and Biotechnology-Derived Products",
+        "From controlled manufacture to preserving quality across the supply chain",
       supporting: [
-        "Regulatory compliance",
-        "Process control",
-        "Product quality",
-        "Patient safety",
-        "Sustainable GMP implementation",
+        "Based on: EudraLex Volume 4 — Part I",
+        "EU GDP Guidelines",
+        "ICH Q9(R1) & ICH Q10",
       ],
-      leftTitle: "Conventional Oral",
-      rightTitle: "Biotechnology-Derived",
-      leftSteps: ["API", "Blend / Granulate", "Compress / Fill", "Package"],
-      rightSteps: ["Cell bank", "Upstream", "Downstream", "Formulate / Fill"],
-      shared: ["Pharmaceutical Quality System"],
-    },
-    speakerNotes:
-      "Opening slide. Emphasize shared PQS with product-specific controls. Do not claim global certification.",
-    revealSteps: 4,
-  }),
-  slide(2, {
-    id: "s01-presenter",
-    section: "open",
-    title: "Presenter Introduction",
-    content: [
-      "Name and organizational role",
-      "Ronagen — روناژن",
-      "GMP training for manufacturing and quality professionals",
-    ],
-    visualType: "presenter",
-    visualData: {
       presenter: {
-        name: "Elham Afsahi",
-        role: "Quality Assurance Expert",
+        name: "Presenter name | Organizational unit",
+        role: "Date",
       },
     },
-    speakerNotes: "Replace placeholders with the presenter’s real credentials before delivery.",
+    speakerNotes:
+      "Scientific basis: GMP follows the nine chapters of Part I, EudraLex Volume 4. GDP comes from the EU distribution guideline; supplementary material from ICH and PIC/S.",
     revealSteps: 2,
   }),
 ];

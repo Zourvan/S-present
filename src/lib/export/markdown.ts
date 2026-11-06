@@ -463,8 +463,8 @@ export function buildPresentationMarkdown(
   const brand = locale === "fa" ? strings.brandFa : strings.brand;
   const title =
     locale === "fa"
-      ? "GMP در تولید دارو"
-      : "GMP in Pharmaceutical Manufacturing";
+      ? "اصول GMP و GDP و سیستم‌های کلیدی کیفیت دارویی"
+      : "GMP & GDP Fundamentals and Key Pharmaceutical Quality Systems";
 
   const toc = slides
     .map((s) => `- [${s.number}. ${s.title}](#${anchor(s)})`)

@@ -80,21 +80,15 @@ export function SplitPathways({
               : "px-3 py-2.5 text-sm md:text-base"
           }`}
         >
-          {strings.sharedPqs}
+          {shared[0] ?? strings.sharedPqs}
         </div>
-        <ul
-          className={`w-full space-y-1 text-center font-semibold leading-snug text-[var(--text-ink)] ${
-            compact ? "text-[0.65rem]" : "text-xs md:text-sm"
-          }`}
-        >
-          {shared.slice(0, 6).map((s, i) => (
-            <RevealItem key={s} index={i + 2} revealStep={revealStep}>
-              <li className="rounded-md bg-[var(--brand-cyan)]/8 px-1.5 py-1">
-                {s}
-              </li>
-            </RevealItem>
-          ))}
-        </ul>
+        {shared.slice(1).map((item, i) => (
+          <RevealItem key={item} index={i + 2} revealStep={revealStep}>
+            <p className="text-center text-xs font-semibold text-[var(--text-muted)] md:text-sm">
+              {item}
+            </p>
+          </RevealItem>
+        ))}
       </div>
 
       <div

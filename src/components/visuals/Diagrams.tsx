@@ -12,9 +12,7 @@ export function CycleDiagram({
   layers?: string[];
   revealStep: number;
 }) {
-  return (
-    <SlideFlow layers={layers} revealStep={revealStep} cycle height={0} />
-  );
+  return <SlideFlow layers={layers} revealStep={revealStep} height={0} />;
 }
 
 export function HierarchyLayers({
@@ -56,26 +54,65 @@ export function HierarchyLayers({
 export function OverviewGrid({
   items = [],
   revealStep,
+  compact = false,
+  fill = false,
 }: {
   items?: Array<{ title: string; body?: string }>;
   revealStep: number;
+  compact?: boolean;
+  fill?: boolean;
 }) {
   const { locale } = useApp();
+  const n = items.length;
   const cols =
-    items.length === 4
-      ? "sm:grid-cols-2 lg:grid-cols-4"
-      : "sm:grid-cols-2 lg:grid-cols-3";
+    n === 5
+      ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5"
+      : n === 4
+        ? "grid-cols-2 lg:grid-cols-4"
+        : n === 3
+          ? "grid-cols-1 sm:grid-cols-3"
+          : "grid-cols-2 lg:grid-cols-3";
+
   return (
-    <div className={`grid auto-rows-fr gap-2.5 sm:gap-3 ${cols}`}>
+    <div
+      className={`grid gap-2 sm:gap-2.5 ${cols} ${
+        fill ? "min-h-0 flex-1 content-stretch auto-rows-fr" : "auto-rows-fr"
+      }`}
+    >
       {items.map((item, i) => (
-        <RevealItem key={item.title} index={i} revealStep={revealStep}>
-          <div className="flex h-full min-h-[7.5rem] flex-col rounded-lg border border-[var(--border)] bg-[var(--surface)] p-3 md:p-4">
-            <div className="mb-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--brand-cyan)] text-sm font-bold text-white">
+        <RevealItem
+          key={item.title}
+          index={i}
+          revealStep={revealStep}
+          className={fill ? "min-h-0 h-full" : undefined}
+        >
+          <div
+            className={`flex h-full flex-col rounded-lg border border-[var(--border)] bg-[var(--surface)] ${
+              compact || fill
+                ? "min-h-0 p-2.5 md:p-3"
+                : "min-h-[6rem] p-3 md:p-4"
+            }`}
+          >
+            <div
+              className={`mb-1 flex items-center justify-center rounded-full bg-[var(--brand-cyan)] font-bold text-white ${
+                compact || fill ? "h-6 w-6 text-xs" : "mb-1.5 h-7 w-7 text-sm"
+              }`}
+            >
               {toLocaleDigits(i + 1, locale)}
             </div>
-            <p className="text-sm font-bold md:text-base">{item.title}</p>
+            <p
+              className={`font-bold leading-snug ${
+                compact || fill ? "text-[0.9em]" : "text-sm md:text-base"
+              }`}
+            >
+              {item.title}
+            </p>
             {item.body ? (
-              <p className="mt-1 flex-1 text-sm font-medium text-[var(--text-muted)] md:text-[0.95em]">
+              <p
+                className={`mt-1 flex-1 font-medium leading-snug text-[var(--text-muted)] ${
+                  compact || fill ? "text-[0.78em]" : "text-sm md:text-[0.95em]"
+                }`}
+              >
                 {item.body}
               </p>
             ) : null}

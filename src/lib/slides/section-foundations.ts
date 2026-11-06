@@ -1,261 +1,152 @@
 import { slide } from "./helpers";
 
 export const foundationsSlides = [
-  slide(3, {
-    id: "s02-executive",
+  slide(2, {
+    id: "s02-learning-objectives",
     section: "foundations",
-    title: "Executive Overview: GMP Purpose and Scope",
-    keyMessage:
-      "GMP translates pharmaceutical quality systems into controlled manufacturing that consistently meets approved specifications and protects patients.",
+    title: "Learning Objectives",
+    keyMessage: "By the end of this session we will be able to:",
     content: [
-      "Good Manufacturing Practice (GMP) is the minimum standard for methods, facilities, and controls used in manufacture, processing, packing, and holding of drug products.",
-      "Scope spans conventional oral finished products and biotechnology-derived drug substances and products; sterile requirements apply only where the dosage form or process demands sterility.",
-      "Implementation rests on a Pharmaceutical Quality System (PQS) aligned with ICH Q10, not on isolated checklist compliance.",
-      "Regulatory frameworks (EU GMP, US CGMP, WHO GMP) share common principles; site-specific interpretation and national requirements still govern.",
-      "This presentation supports Ronagen implementation planning—timelines are organizational estimates, not statutory deadlines.",
+      "Explain the difference and relationship between GMP and GDP.",
+      "Recognize the main requirements of the nine EU GMP chapters.",
+      "Understand the role of documentation and data integrity.",
+      "State the principles of identification, labelling, and label control.",
+      "Recognize the links between deviation, risk, CAPA, and change.",
+      "Select an appropriate first response when facing a quality event.",
     ],
-    visualType: "overviewGrid",
-    visualData: {
-      items: [
-        {
-          title: "Patient safety",
-          body: "Consistent quality reduces risk of substandard or contaminated medicines.",
-        },
-        {
-          title: "Regulatory compliance",
-          body: "Demonstrable control of processes, materials, and records.",
-        },
-        {
-          title: "Business continuity",
-          body: "Robust systems reduce deviations, recalls, and supply disruption.",
-        },
-        {
-          title: "Dual pathways",
-          body: "Shared PQS with product-specific controls for oral vs biotech.",
-        },
-      ],
-    },
-    references: ["R1", "R3", "R4", "R15"],
+    visualType: "bullets",
     speakerNotes:
-      "Frame GMP as risk-based control, not bureaucracy. Clarify that Ronagen may operate one or both pathways; do not imply current GMP certification status.",
+      "Use this slide to set expectations; return to these bullets in the closing summary.",
+    revealSteps: 6,
+  }),
+  slide(3, {
+    id: "s03-final-test-not-enough",
+    section: "foundations",
+    title: "Why Final Testing Alone Is Not Enough",
+    keyMessage: "Quality cannot be assured by final testing alone.",
+    content: [
+      "Testing is performed on samples and defined attributes.",
+      "Not all process errors are revealed by final testing.",
+      "Labelling errors, mix-ups, or data defects may go undetected.",
+      "Quality must be built into the process and preserved along the chain.",
+    ],
+    visualType: "callout",
+    visualData: {
+      callout:
+        "Passing laboratory results do not replace process compliance with GMP.",
+    },
+    references: ["R1"],
+    speakerNotes: "Reference: EU GMP, Chapters 1 and 6.",
     revealSteps: 5,
   }),
   slide(4, {
-    id: "s03-product-taxonomy",
+    id: "s04-patient-quality",
     section: "foundations",
-    title: "Product Taxonomy: Conventional Oral vs Biotechnology-Derived",
-    keyMessage:
-      "Regulatory expectations diverge by product type—classification drives applicable annexes, validation depth, and QC strategy.",
+    title: "Medicine Quality from the Patient’s Perspective",
+    keyMessage: "Ultimate goal: patient protection",
     content: [
-      "Conventional oral medicines: small-molecule APIs and finished dosage forms (tablets, capsules, liquids) governed primarily by general GMP chapters and ICH Q6A.",
-      "Biotechnology-derived products: proteins, monoclonal antibodies, vaccines, and advanced therapies from living systems—additional controls for cell banks, viral safety, and comparability (ICH Q5 series, Q6B).",
-      "Hybrid products (e.g., peptides, complex biologics in oral delivery) require case-by-case mapping to the dominant regulatory paradigm.",
-      "Sterile manufacturing (Annex 1 / aseptic guidance) applies to sterile injectables and certain ophthalmic/biotech fill-finish—not to typical non-sterile oral solid dose lines.",
-      "Pathway labels in visuals indicate focus areas; both may share warehousing, QC labs, and quality systems where justified.",
+      "Correct identity throughout its authorised shelf life.",
+      "Appropriate strength or amount of active substance.",
+      "Relevant purity and microbiological quality requirements met.",
+      "Expected performance delivered.",
+      "Supplied in suitable packaging with correct information.",
     ],
-    visualType: "taxonomy",
+    visualType: "callout",
     visualData: {
-      legend: [
-        { label: "Conventional oral", pathway: "oral" },
-        { label: "Biotechnology-derived", pathway: "biotech" },
-        { label: "Shared PQS elements", pathway: "shared" },
-      ],
-      items: [
-        { title: "Small-molecule API", body: "Chemical synthesis, impurity control, Q6A specs" },
-        { title: "Oral finished dose", body: "Blend, granulation, compression, coating, pack" },
-        { title: "Recombinant protein / mAb", body: "Cell line, upstream, downstream, formulation" },
-        { title: "Vaccines / complex biologics", body: "Seed lots, inactivation, adjuvants, cold chain" },
-      ],
+      callout: "Ultimate goal: patient protection",
     },
-    references: ["R1", "R5", "R6", "R11", "R12", "R16"],
+    references: ["R1", "R3"],
     speakerNotes:
-      "Stress that ‘biotech’ does not automatically mean sterile—many biologics are lyophilized or liquid injectables requiring Annex 1, while oral biologics remain rare. Avoid over-generalizing.",
-    revealSteps: 5,
+      "Critical quality attributes depend on product type; for example, sterility is not required for every dosage form. Reference: EU GMP Chapter 1; ICH Q9(R1).",
+    revealSteps: 6,
   }),
   slide(5, {
-    id: "s04-regulatory-framework",
+    id: "s05-gmp-vs-gdp",
     section: "foundations",
-    title: "Regulatory Framework: EU, US, and WHO Alignment",
+    title: "Difference and Relationship: GMP and GDP",
     keyMessage:
-      "Harmonized ICH guidelines sit atop region-specific GMP regulations; global sites must map all applicable layers.",
+      "Shared goal: control activities that affect quality and protect the patient.",
     content: [
-      "EU: EudraLex Volume 4 (Chapters 1–9, Part II APIs, Annexes 1–19 as applicable).",
-      "US: 21 CFR Parts 210/211 (finished pharmaceuticals), Part 600 series entry for biological products, plus FDA guidance.",
-      "WHO: TRS GMP annexes support national regulatory authority expectations in many markets.",
-      "ICH Q7–Q14 provide science-based quality guidelines referenced by major authorities.",
-      "Marketing authorization and national inspectorates define which annexes and pharmacopoeial standards bind each product.",
+      "GDP here means Good Distribution Practice; good documentation practice is denoted GDocP.",
     ],
-    visualType: "hierarchy",
+    visualType: "comparisonTable",
     visualData: {
-      layers: [
-        "National law & marketing authorization",
-        "Regional GMP rules (EU / US / WHO)",
-        "ICH quality guidelines (Q8–Q14, Q5, Q6)",
-        "Product-specific annexes (e.g., Annex 1 sterile, Annex 15 validation)",
-        "Site quality manual & procedures",
-      ],
-    },
-    references: ["R1", "R3", "R4", "R5", "R6", "R15"],
-    speakerNotes:
-      "Reference date for cited URLs: 9 October 2026. Do not claim live regulatory re-verification in this session.",
-    revealSteps: 5,
-  }),
-  slide(6, {
-    id: "s05-pqs",
-    section: "foundations",
-    title: "Pharmaceutical Quality System (PQS)",
-    keyMessage:
-      "ICH Q10 defines the PQS as management responsibilities, resources, and continual improvement over the product lifecycle.",
-    content: [
-      "Management commitment and quality policy cascade to measurable objectives and resource allocation.",
-      "Process performance and product quality monitoring feed management review and CAPA.",
-      "Change management and knowledge management link development, tech transfer, and commercial manufacture.",
-      "PQS integrates GMP with pharmaceutical development (Q8), QRM (Q9), and quality systems elements (Q10).",
-      "Oral and biotech operations share PQS backbone; product-specific modules address process and control differences.",
-    ],
-    visualType: "cycle",
-    visualData: {
-      items: [
-        { title: "Pharmaceutical development", body: "Q8 / QbD knowledge" },
-        { title: "Technology transfer", body: "Scaled control strategy" },
-        { title: "Commercial manufacture", body: "GMP execution" },
-        { title: "Product discontinuation", body: "Retention & change closure" },
-      ],
-      callout: "Continual improvement closes the loop via CAPA and management review.",
-    },
-    references: ["R6", "R15", "R19"],
-    speakerNotes:
-      "Emphasize that a written quality manual alone is insufficient—evidence of operation (records, metrics, audits) demonstrates PQS maturity.",
-    revealSteps: 5,
-  }),
-  slide(7, {
-    id: "s06-quality-risk-management",
-    section: "foundations",
-    title: "Quality Risk Management (QRM)",
-    keyMessage:
-      "ICH Q9 requires proactive identification, assessment, control, and review of risks to quality across the lifecycle.",
-    content: [
-      "Risk assessment tools (FMEA, FTA, HACCP-style analysis) prioritize controls commensurate with severity, probability, and detectability.",
-      "QRM informs facility design, process design, validation extent, and contamination control strategy—not a one-time exercise.",
-      "Documented rationale supports inspector dialogue; risk acceptability must align with patient safety and regulatory expectations.",
-      "Biotech adds risks: adventitious agents, product-related impurities, and supply chain for critical raw materials.",
-      "Oral solid dose risks often center on cross-contamination, blend uniformity, and moisture-sensitive APIs.",
-    ],
-    visualType: "riskMatrix",
-    visualData: {
-      axes: {
-        x: "Detectability (low → high)",
-        y: "Severity × probability (low → high)",
-        cells: [
-          ["Monitor", "Mitigate", "Priority control"],
-          ["Accept with rationale", "Reduce risk", "Mandatory CAPA"],
-          ["Document", "Validate control", "Stop / redesign"],
+      table: {
+        headers: ["Topic", "GMP", "GDP"],
+        rows: [
+          ["Title", "Good Manufacturing Practice", "Good Distribution Practice"],
+          [
+            "Focus",
+            "Consistent manufacture and control of the product",
+            "Preserving product quality and integrity",
+          ],
+          [
+            "Example activities",
+            "Manufacture, packaging, quality control",
+            "Receipt, storage, supply, and transport",
+          ],
+          [
+            "Example risks",
+            "Contamination, mix-up, process error",
+            "Temperature excursion, damage, broken traceability",
+          ],
         ],
+        caption: "Shared goal: control quality-affecting activities and protect patients.",
       },
-      callout: "Illustrative matrix—for training only; site assessments use validated scoring.",
     },
-    references: ["R6", "R17"],
+    references: ["R1", "R2"],
     speakerNotes:
-      "Explicitly label the matrix as illustrative. Never substitute a generic matrix for product-specific risk files.",
+      "Clarify GDocP vs GDP if the audience confuses documentation with distribution. Reference: EU GMP Chapter 1; EU GDP introduction and Chapter 1.",
     revealSteps: 4,
   }),
-  slide(8, {
-    id: "s07-gmp-principles",
+  slide(6, {
+    id: "s06-pqs-lifecycle",
     section: "foundations",
-    title: "Core GMP Principles and Responsibilities",
-    keyMessage:
-      "Clear accountability, validated processes, qualified personnel, and complete records underpin every batch release decision.",
+    title: "Quality System Across the Product Lifecycle",
+    keyMessage: "Pharmaceutical Quality System — PQS",
     content: [
-      "Manufacturing and quality units must be independent; batch release authority rests with the Qualified Person / authorized release function per region.",
-      "Written procedures control every operational step; deviations require investigation before repeat operations.",
-      "Materials, labels, and packaging components are quarantined until released by QC or defined procedures.",
-      "Self-inspection and supplier qualification extend control beyond the physical site fence.",
-      "Data must be attributable, legible, contemporaneous, original, and accurate (ALCOA+) with audit trails where computerized.",
-    ],
-    visualType: "responsibilityMatrix",
-    visualData: {
-      matrix: {
-        rows: ["Production", "Quality Control", "Quality Assurance", "Engineering", "Management"],
-        cols: ["Execute batch", "Test & release", "Audit & CAPA", "Qualify equipment", "Resource PQS"],
-        cells: [
-          ["R", "C", "I", "C", "I"],
-          ["C", "R", "C", "I", "I"],
-          ["A", "C", "R", "C", "C"],
-          ["C", "I", "C", "R", "I"],
-          ["I", "I", "A", "I", "R"],
-        ],
-      },
-      callout: "R = Responsible, A = Accountable, C = Consulted, I = Informed (illustrative RACI).",
-    },
-    references: ["R1", "R4", "R8", "R15"],
-    speakerNotes:
-      "Adapt RACI to Ronagen’s actual org chart. QP terminology is EU-specific; US uses QC unit and authorized release.",
-    revealSteps: 5,
-  }),
-  slide(9, {
-    id: "s08-qbd-overview",
-    section: "foundations",
-    title: "Quality by Design (QbD): Lifecycle Perspective",
-    keyMessage:
-      "ICH Q8 describes QbD as systematic development building quality into the product via defined quality target product profile and control strategy.",
-    content: [
-      "Quality Target Product Profile (QTPP) summarizes intended use, route, and quality attributes of the drug product.",
-      "Critical Quality Attributes (CQAs) are physical, chemical, biological, or microbiological properties that should be controlled.",
-      "Design space and control strategy link material attributes and process parameters to CQAs.",
-      "QbD is expected for new chemical entities and increasingly for biologics comparability and post-approval changes (Q12).",
-      "Legacy products may implement QbD elements retrospectively through knowledge management and process validation.",
+      "Product and process knowledge is managed.",
+      "Quality risks are identified and controlled.",
+      "Process performance and product quality are monitored.",
+      "Problems and changes are managed systematically.",
+      "Improvement opportunities are identified.",
     ],
     visualType: "lifecycle",
     visualData: {
       items: [
-        { title: "Define QTPP", body: "Patient and label claims" },
-        { title: "Identify CQAs", body: "Risk-ranked attributes" },
-        { title: "Link CPPs & MAT", body: "Process and material controls" },
-        { title: "Control strategy", body: "Monitoring & specs" },
-        { title: "Lifecycle", body: "Change under Q12 where applicable" },
+        { title: "Development", body: "Build product and process knowledge" },
+        { title: "Tech transfer", body: "Move knowledge into operations" },
+        { title: "Commercial manufacture", body: "Monitor and control" },
+        { title: "Discontinuation", body: "Manage end of supply" },
       ],
+      callout:
+        "ICH Q10 enablers: knowledge management and quality risk management.",
     },
-    references: ["R6", "R19"],
-    speakerNotes:
-      "QbD depth varies by product class; biologics emphasize attribute control and comparability rather than classical design space for small molecules.",
+    references: ["R4"],
+    speakerNotes: "Reference: ICH Q10, sections 1 and 3.",
     revealSteps: 5,
   }),
-  slide(10, {
-    id: "s09-qbd-elements",
+  slide(7, {
+    id: "s07-management-culture",
     section: "foundations",
-    title: "QbD Elements: CQAs, CPPs, and Control Strategy",
+    title: "Management Responsibility and Quality Culture",
     keyMessage:
-      "A documented control strategy demonstrates how commercial manufacturing maintains CQAs within approved limits.",
+      "Quality culture is shaped by daily decisions and behaviours of management and staff.",
     content: [
-      "Critical Process Parameters (CPPs) and critical material attributes are identified through development and risk assessment.",
-      "In-process controls and specifications form a layered defense— not reliance on final testing alone.",
-      "For oral products: dissolution, content uniformity, and impurity profiles often drive CQAs.",
-      "For biotech: potency, purity, glycosylation, aggregation, and bioburden/endotoxin (where relevant) dominate CQA sets.",
-      "Regulatory submissions encode the control strategy; post-approval changes must assess impact on validated state.",
+      "Provide resources and competent personnel.",
+      "Define and communicate responsibilities and authorities.",
+      "Support transparent reporting of errors and unusual conditions.",
+      "Prevent production pressure from overriding quality requirements.",
+      "Review quality-system performance and effectiveness.",
     ],
-    visualType: "relationship",
+    visualType: "callout",
     visualData: {
-      flow: {
-        title: "Control strategy linkage (conceptual)",
-        nodes: [
-          { id: "qtpp", label: "QTPP", pathway: "shared" },
-          { id: "cqa", label: "CQAs", pathway: "shared" },
-          { id: "cpp", label: "CPPs / PAR", pathway: "oral" },
-          { id: "cppb", label: "Upstream / downstream CPPs", pathway: "biotech" },
-          { id: "ipc", label: "IPC & specs", pathway: "shared" },
-        ],
-        edges: [
-          { from: "qtpp", to: "cqa" },
-          { from: "cqa", to: "cpp" },
-          { from: "cqa", to: "cppb" },
-          { from: "cpp", to: "ipc" },
-          { from: "cppb", to: "ipc" },
-        ],
-      },
+      callout:
+        "Quality culture is shaped by daily decisions and behaviours of management and staff.",
     },
-    references: ["R6", "R10", "R11", "R12"],
+    references: ["R1", "R4"],
     speakerNotes:
-      "Do not invent numerical design-space limits in training—cite approved registration documents for commercial products.",
-    revealSteps: 4,
+      "Fair review without rushed blame does not mean removing accountability. Reference: EU GMP Chapter 1; ICH Q10 section 2.",
+    revealSteps: 6,
   }),
 ];

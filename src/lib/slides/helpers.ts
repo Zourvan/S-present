@@ -62,7 +62,9 @@ export function getMaxReveal(slide: Slide): number {
     case "flow":
     case "processSteps":
       if (vd?.flow?.nodes?.length) {
-        return Math.max(declared, vd.flow.nodes.length);
+        const withBullets = contentLen > 0 ? vd.flow.nodes.length + contentLen : vd.flow.nodes.length;
+        const withCallout = vd.callout ? withBullets + 1 : withBullets;
+        return Math.max(declared, withCallout, 1);
       }
       return Math.max(declared, contentLen, 1);
     case "cycle":
@@ -70,14 +72,17 @@ export function getMaxReveal(slide: Slide): number {
     case "relationship": {
       const layers = vd?.layers?.length ?? contentLen;
       const items = vd?.items?.length ?? 0;
-      return Math.max(declared, layers, items, 1);
+      const withCallout = vd?.callout ? Math.max(layers, items) + 1 : Math.max(layers, items);
+      return Math.max(declared, withCallout, 1);
     }
     case "hierarchy":
       return Math.max(declared, vd?.layers?.length ?? contentLen, 1);
     case "overviewGrid":
       return Math.max(declared, vd?.items?.length ?? contentLen, 1);
-    case "comparisonTable":
-      return Math.max(declared, vd?.table?.rows?.length ?? 1, 1);
+    case "comparisonTable": {
+      const rows = vd?.table?.rows?.length ?? 1;
+      return Math.max(declared, vd?.callout ? rows + 1 : rows, 1);
+    }
     case "taxonomy":
       return Math.max(declared, vd?.callout ? 7 : 2);
     case "splitPathways": {

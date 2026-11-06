@@ -9,9 +9,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "GMP in Pharmaceutical Manufacturing | Ronagen",
+  title: "GMP & GDP Fundamentals | Ronagen",
   description:
-    "Interactive GMP presentation: conventional oral medicines and biotechnology-derived products — Ronagen / روناژن",
+    "Interactive presentation on GMP, GDP, and key pharmaceutical quality systems — Ronagen / روناژن",
 };
 
 export default function RootLayout({

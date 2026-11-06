@@ -21,8 +21,8 @@ export async function exportPresentationPptx(
   pptx.author = "Ronagen";
   pptx.title =
     locale === "fa"
-      ? "GMP در تولید دارو"
-      : "GMP in Pharmaceutical Manufacturing";
+      ? "اصول GMP و GDP و سیستم‌های کلیدی کیفیت دارویی"
+      : "GMP & GDP Fundamentals and Key Pharmaceutical Quality Systems";
   pptx.subject = `Reference date ${REFERENCE_DATE}`;
 
   slides.forEach((slide, index) => {
