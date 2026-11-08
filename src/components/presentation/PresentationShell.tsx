@@ -368,12 +368,12 @@ export function PresentationShell() {
             </ChromeButton>
             {exportOpen ? (
               <div
-                className="absolute right-0 z-50 mt-1 w-48 rounded-md border border-[var(--border)] bg-[var(--surface)] p-1 shadow-lg"
+                className="absolute end-0 z-50 mt-1 min-w-48 max-w-[calc(100vw-1.5rem)] rounded-md border border-[var(--border)] bg-[var(--surface)] p-1 shadow-lg"
                 data-no-nav
               >
                 <button
                   type="button"
-                  className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                  className="block w-full rounded px-3 py-2 text-start text-xs font-semibold hover:bg-[var(--bg-cream)]"
                   disabled={Boolean(exporting)}
                   onClick={() => void handleExport("pdf")}
                 >
@@ -381,7 +381,7 @@ export function PresentationShell() {
                 </button>
                 <button
                   type="button"
-                  className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                  className="block w-full rounded px-3 py-2 text-start text-xs font-semibold hover:bg-[var(--bg-cream)]"
                   disabled={Boolean(exporting)}
                   onClick={() => void handleExport("pptx")}
                 >
@@ -389,7 +389,7 @@ export function PresentationShell() {
                 </button>
                 <button
                   type="button"
-                  className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                  className="block w-full rounded px-3 py-2 text-start text-xs font-semibold hover:bg-[var(--bg-cream)]"
                   disabled={Boolean(exporting)}
                   onClick={() => void handleExport("md")}
                 >
@@ -411,12 +411,12 @@ export function PresentationShell() {
           </ChromeButton>
           {moreOpen ? (
             <div
-              className="absolute right-0 z-50 mt-1 w-44 rounded-md border border-[var(--border)] bg-[var(--surface)] p-1 shadow-lg"
+              className="absolute end-0 z-50 mt-1 min-w-48 max-w-[calc(100vw-1.5rem)] rounded-md border border-[var(--border)] bg-[var(--surface)] p-1 shadow-lg"
               data-no-nav
             >
               <button
                 type="button"
-                className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                className="block w-full rounded px-3 py-2 text-start text-xs font-semibold hover:bg-[var(--bg-cream)]"
                 onClick={() => {
                   bumpTypeScale(-1);
                   setMoreOpen(false);
@@ -427,7 +427,7 @@ export function PresentationShell() {
               </button>
               <button
                 type="button"
-                className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                className="block w-full rounded px-3 py-2 text-start text-xs font-semibold hover:bg-[var(--bg-cream)]"
                 onClick={() => {
                   bumpTypeScale(1);
                   setMoreOpen(false);
@@ -438,7 +438,7 @@ export function PresentationShell() {
               </button>
               <button
                 type="button"
-                className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                className="block w-full rounded px-3 py-2 text-start text-xs font-semibold hover:bg-[var(--bg-cream)]"
                 onClick={() => {
                   toggleTextBold();
                   setMoreOpen(false);
@@ -448,7 +448,7 @@ export function PresentationShell() {
               </button>
               <button
                 type="button"
-                className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                className="block w-full rounded px-3 py-2 text-start text-xs font-semibold hover:bg-[var(--bg-cream)]"
                 onClick={() => {
                   setNotesOpen((v) => !v);
                   setMoreOpen(false);
@@ -458,7 +458,7 @@ export function PresentationShell() {
               </button>
               <button
                 type="button"
-                className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                className="block w-full rounded px-3 py-2 text-start text-xs font-semibold hover:bg-[var(--bg-cream)]"
                 onClick={() => {
                   toggleTheme();
                   setMoreOpen(false);
@@ -468,7 +468,7 @@ export function PresentationShell() {
               </button>
               <button
                 type="button"
-                className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                className="block w-full rounded px-3 py-2 text-start text-xs font-semibold hover:bg-[var(--bg-cream)]"
                 onClick={() => {
                   toggleLocale();
                   setMoreOpen(false);
@@ -478,7 +478,7 @@ export function PresentationShell() {
               </button>
               <button
                 type="button"
-                className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                className="block w-full rounded px-3 py-2 text-start text-xs font-semibold hover:bg-[var(--bg-cream)]"
                 disabled={Boolean(exporting)}
                 onClick={() => void handleExport("pdf")}
               >
@@ -488,7 +488,7 @@ export function PresentationShell() {
               </button>
               <button
                 type="button"
-                className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                className="block w-full rounded px-3 py-2 text-start text-xs font-semibold hover:bg-[var(--bg-cream)]"
                 disabled={Boolean(exporting)}
                 onClick={() => void handleExport("pptx")}
               >
@@ -498,7 +498,7 @@ export function PresentationShell() {
               </button>
               <button
                 type="button"
-                className="block w-full rounded px-3 py-2 text-left text-xs font-semibold hover:bg-[var(--bg-cream)]"
+                className="block w-full rounded px-3 py-2 text-start text-xs font-semibold hover:bg-[var(--bg-cream)]"
                 disabled={Boolean(exporting)}
                 onClick={() => void handleExport("md")}
               >
